@@ -7,11 +7,6 @@ package StockTradingClient;
 
 public class ClientTest {
 
-	// added by dkarmazi
-	// dkarmazi
-	// Hirosh
-        // Oct 14asd
-	
     /**
      * @param args the command line arguments
      */
