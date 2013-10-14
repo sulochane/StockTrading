@@ -7,6 +7,8 @@ package StockTradingClient;
 
 public class ClientTest {
 
+	// added by dkarmazi
+	
     /**
      * @param args the command line arguments
      */
