@@ -10,7 +10,7 @@ public class ClientTest {
 	// added by dkarmazi
 	// dkarmazi
 	// Hirosh
-	// dkarmazi
+	// dkarmazin
 	
     /**
      * @param args the command line arguments
