@@ -19,6 +19,6 @@ public class ClientTest {
     
     public void Test()
     {
-        System.out.println("This is Client");        
+        System.out.println("This is Client.");        
     }
 }
