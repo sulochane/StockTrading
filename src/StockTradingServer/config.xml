@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<stockTrading>
+    <database>        
+        <url>jdbc:mysql://192.30.164.204</url>
+        <port>3306</port>
+        <dbName>repo6545</dbName>
+        <user>repo6545</user>
+        <password>MF4@2163G!8d2L4</password>
+    </database>
+</stockTrading>
