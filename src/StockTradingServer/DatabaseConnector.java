@@ -78,41 +78,6 @@ public class DatabaseConnector {
 		return brokerageFirms;
 	}
 
-	// public ArrayList<StatusesOptions> selectAllStatuses() {
-	// ArrayList<StatusesOptions> brokerageFirms = new
-	// ArrayList<StatusesOptions>();
-	// Connection con = this.con;
-	// Statement st = null;
-	// ResultSet rs = null;
-	// String query = "SELECT * FROM DIC_STATUSES;";
-	//
-	// try {
-	// st = con.createStatement();
-	// ResultSet res = st.executeQuery(query);
-	//
-	// while (res.next()) {
-	//
-	// int id = res.getInt(1);
-	// String name = res.getString(2);
-	// String addressStreet = res.getString(3);
-	// String addressCity = res.getString(4);
-	// String addressState = res.getString(5);
-	// String addressZip = res.getString(5);
-	//
-	// BrokerageFirm brokerageFirm = new BrokerageFirm();
-	// brokerageFirm.setId(id);
-	// brokerageFirm.setName(name);
-	// brokerageFirm.setAddressStreet(addressStreet);
-	// brokerageFirm.setAddressCity(addressCity);
-	// brokerageFirm.setAddressState(addressState);
-	// brokerageFirm.setAddressZip(addressZip);
-	//
-	// brokerageFirms.add(brokerageFirm);
-	//
-	// }
-
-	// }
-
 	public boolean insertNewBrokerageFirm(BrokerageFirm newFirm) {
 
 		Connection con = this.con;
@@ -161,4 +126,41 @@ public class DatabaseConnector {
 
 		return true;
 	}
+
+	/*
+	 * This method returns an ArrayList<StatusesOptions> of all the statuses,
+	 * sorted
+	 */
+	public ArrayList<StatusesOptions> selectAllStatuses() {
+
+		ArrayList<StatusesOptions> statusesList = new ArrayList<StatusesOptions>();
+
+		Connection con = this.con;
+		Statement st = null;
+		ResultSet rs = null;
+		String query = "SELECT * FROM DIC_STATUSES ORDER BY PRIORITY;";
+
+		try {
+			st = con.createStatement();
+			ResultSet res = st.executeQuery(query);
+			while (res.next()) {
+
+				int id = res.getInt(1);
+				String name = res.getString(2);
+
+				StatusesOptions status = new StatusesOptions();
+				status.setId(id);
+				status.setName(name);
+
+				statusesList.add(status);
+			}
+		} catch (SQLException ex) {
+			Logger lgr = Logger.getLogger(DatabaseConnector.class.getName());
+			lgr.log(Level.WARNING, ex.getMessage(), ex);
+		}
+
+		return statusesList;
+
+	}
+
 }
