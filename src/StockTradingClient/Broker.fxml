@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="425.9998779296875" prefWidth="625.9998337890574" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="StockTradingClient.BrokerController">
+  <children>
+    <GridPane id="GridPane" alignment="TOP_LEFT" prefWidth="595.9998337890574" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="14.0">
+      <children>
+        <TextField prefWidth="375.0" promptText="Name of the Broker" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <TextField alignment="CENTER_LEFT" prefWidth="375.0" promptText="SSN Number of the Broker" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <TextField fx:id="address" prefWidth="202.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+        <TextField fx:id="state" alignment="TOP_LEFT" maxWidth="-Infinity" minWidth="30.0" prefWidth="30.0" GridPane.columnIndex="1" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="8" />
+        <TextField fx:id="zip" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="75.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+        <Label text="Social Security Number (SSN) :" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+        <Label text="Broker Name :" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <Label text="Address :" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+        <Label text="State :" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+        <Label text="ZIP :" GridPane.columnIndex="0" GridPane.rowIndex="9" />
+        <Label text="Contact Details:" GridPane.columnIndex="0" GridPane.rowIndex="6">
+          <font>
+            <Font name="System Bold" size="12.0" />
+          </font>
+        </Label>
+        <Label text="Email :" GridPane.columnIndex="0" GridPane.rowIndex="11" />
+        <Label text="Phone (Office) :" GridPane.columnIndex="0" GridPane.rowIndex="12" />
+        <Label text="Phone (Mobile) :" GridPane.columnIndex="0" GridPane.rowIndex="13" />
+        <HBox id="HBox" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" prefWidth="-1.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="19">
+          <children>
+            <Button alignment="CENTER" defaultButton="true" minWidth="-Infinity" mnemonicParsing="false" prefWidth="80.0" rotate="0.0" text="Add" />
+            <Button cancelButton="true" contentDisplay="LEFT" minWidth="-Infinity" mnemonicParsing="false" onAction="#Clear" prefWidth="80.0" text="Clear" />
+          </children>
+        </HBox>
+        <ChoiceBox fx:id="statusChoiceBox" mouseTransparent="false" pickOnBounds="false" prefWidth="146.49990844726562" GridPane.columnIndex="1" GridPane.rowIndex="16">
+          <items>
+            <FXCollections fx:factory="observableArrayList">
+              <String fx:value="Item 1" />
+              <String fx:value="Item 2" />
+              <String fx:value="Item 3" />
+            </FXCollections>
+          </items>
+        </ChoiceBox>
+        <Label text="Status :" GridPane.columnIndex="0" GridPane.rowIndex="16" />
+        <TextField prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+        <TextField maxWidth="-Infinity" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+        <TextField maxWidth="-Infinity" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+        <Label text="Brokerage Firm" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <ComboBox fx:id="brokerageFirmComboBox" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1">
+          <items>
+            <FXCollections fx:factory="observableArrayList">
+              <String fx:value="Item 1" />
+              <String fx:value="Item 2" />
+              <String fx:value="Item 3" />
+            </FXCollections>
+          </items>
+        </ComboBox>
+      </children>
+      <columnConstraints>
+        <ColumnConstraints fillWidth="true" hgrow="SOMETIMES" minWidth="170.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+      </columnConstraints>
+      <rowConstraints>
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+      </rowConstraints>
+    </GridPane>
+    <Label layoutX="14.0" text="Broker Details" textAlignment="CENTER" textFill="#292929" AnchorPane.bottomAnchor="359.0" AnchorPane.topAnchor="24.0">
+      <font>
+        <Font name="Candara Bold" size="16.0" />
+      </font>
+    </Label>
+  </children>
+</AnchorPane>
