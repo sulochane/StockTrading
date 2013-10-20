@@ -1,3 +1,5 @@
+package StockTradingServer;
+
 public class StatusesOptions {
 	private int id;
 	private String name;

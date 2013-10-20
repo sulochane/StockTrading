@@ -1,3 +1,5 @@
+package StockTradingServer;
+
 public class BrokerageFirm {
 
 	private int id;

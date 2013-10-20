@@ -11,22 +11,15 @@ import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 public class ServerTest {
-    public static void main(String[] args) 
-    {
-        System.out.println("This is the Stock Trading Systems - Server");
-        
-        StockTradingClient.ClientTest client = new StockTradingClient.ClientTest();
-        client.Test();
-        StockTradingCommon.CommonTest common = new StockTradingCommon.CommonTest();
-        common.Test();
-        
-        
-        
-        
-        
-        
+	public static void main(String[] args) {
+		System.out.println("This is the Stock Trading Systems - Server");
+
+		StockTradingClient.ClientTest client = new StockTradingClient.ClientTest();
+		client.Test();
+		StockTradingCommon.CommonTest common = new StockTradingCommon.CommonTest();
+		common.Test();
+
 		DatabaseConnector dc = new DatabaseConnector();
 		dc.connectToDatabase();
 		Connection con = dc.getCon();
@@ -41,7 +34,6 @@ public class ServerTest {
 
 		try {
 			st = con.createStatement();
-			
 
 			// rs = st.executeQuery("SELECT VERSION()");
 			rs = st.executeQuery("SHOW TABLES");
@@ -77,13 +69,4 @@ public class ServerTest {
 
 	}
 
-        
-        
-        
-        
-        
-        
-        
-        
-    }
 }
