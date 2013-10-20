@@ -25,7 +25,7 @@ public class ServerTest {
         
         
         
-        
+
         
 		DatabaseConnector dc = new DatabaseConnector();
 		dc.connectToDatabase();
@@ -34,10 +34,6 @@ public class ServerTest {
 		// TODO Auto-generated method stub
 		Statement st = null;
 		ResultSet rs = null;
-
-		String url = "jdbc:mysql://192.30.164.204:3306/repo6545";
-		String user = "repo6545";
-		String password = "MF4@2163G!8d2L4";
 
 		try {
 			st = con.createStatement();
@@ -86,4 +82,4 @@ public class ServerTest {
         
         
     }
-}
+
