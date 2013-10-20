@@ -120,15 +120,18 @@ public class DatabaseConnector {
 		ResultSet rs = null;
 
 		String query = "INSERT INTO BROKERAGE_FIRM_INFO (NAME, ADDRESS_STREET,ADDRESS_CITY, ADDRESS_STATE, ADDRESS_ZIP, STATUS) VALUES ("
-				+ newFirm.getName()
-				+ ","
+				+ "\"" + newFirm.getName()
+				+ "\",\""
 				+ newFirm.getAddressStreet()
-				+ ","
+				+ "\",\""
 				+ newFirm.getAddressCity()
-				+ ","
+				+ "\",\""
 				+ newFirm.getAddressState()
-				+ "," + newFirm.getAddressZip() + ")";
+				+ "\",\""
+				 + newFirm.getAddressZip() + "\")";
 
+		System.out.println(query);
+		
 		try {
 
 			st = con.createStatement();
@@ -156,5 +159,4 @@ public class DatabaseConnector {
 
 		return true;
 	}
-
 }
