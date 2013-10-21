@@ -57,6 +57,62 @@ public class MainController implements Initializable {
         stage.show();
     }
     
+    @FXML
+    private void handleButtonAction_btnAddStock(ActionEvent event) throws IOException{
+        
+        Stage stage = new Stage();
+        Parent root = FXMLLoader.load(
+            MainController.class.getResource("Stock.fxml"));
+ 
+        stage.setScene(new Scene(root));
+        stage.setTitle("Add new Stock");
+        stage.initModality(Modality.NONE);
+        stage.initOwner(  ((Node)event.getSource()).getScene().getWindow() );
+        stage.show();
+    }
+    
+    @FXML
+    private void handleButtonAction_btnAddCustomer(ActionEvent event) throws IOException{
+        
+        Stage stage = new Stage();
+        Parent root = FXMLLoader.load(
+            MainController.class.getResource("Customer.fxml"));
+ 
+        stage.setScene(new Scene(root));
+        stage.setTitle("Add new Customer");
+        stage.initModality(Modality.NONE);
+        stage.initOwner(  ((Node)event.getSource()).getScene().getWindow() );
+        stage.show();
+    }
+        
+    @FXML
+    private void handleButtonAction_btnAddSellOrder(ActionEvent event) throws IOException{
+        
+        Stage stage = new Stage();
+        Parent root = FXMLLoader.load(
+            MainController.class.getResource("SellOrder.fxml"));
+ 
+        stage.setScene(new Scene(root));
+        stage.setTitle("Add new Selling Order");
+        stage.initModality(Modality.NONE);
+        stage.initOwner(  ((Node)event.getSource()).getScene().getWindow() );
+        stage.show();
+    }
+            
+    @FXML
+    private void handleButtonAction_btnAddBuyOrder(ActionEvent event) throws IOException{
+        
+        Stage stage = new Stage();
+        Parent root = FXMLLoader.load(
+            MainController.class.getResource("BuyOrder.fxml"));
+ 
+        stage.setScene(new Scene(root));
+        stage.setTitle("Add new Buying Order");
+        stage.initModality(Modality.NONE);
+        stage.initOwner(  ((Node)event.getSource()).getScene().getWindow() );
+        stage.show();
+    }
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO

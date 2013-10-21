@@ -10,10 +10,10 @@
 
 <AnchorPane id="AnchorPane" prefHeight="527.0000779296824" prefWidth="625.9998337890574" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="StockTradingClient.BrokerController">
   <children>
-    <GridPane id="GridPane" alignment="TOP_LEFT" prefWidth="595.9998337890574" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="14.0">
+    <GridPane id="GridPane" alignment="TOP_LEFT" prefWidth="596.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="14.0">
       <children>
         <TextField fx:id="BrokerName" prefWidth="375.0" promptText="Name of the Broker" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-        <TextField fx:id="BrokerSSN"alignment="CENTER_LEFT" prefWidth="375.0" promptText="SSN Number of the Broker" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <TextField fx:id="BrokerSSN" alignment="CENTER_LEFT" prefWidth="375.0" promptText="SSN Number of the Broker" GridPane.columnIndex="1" GridPane.rowIndex="2" />
         <TextField fx:id="AddressStreet" prefWidth="202.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
         <TextField fx:id="AddressCity" maxWidth="-Infinity" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
         <TextField fx:id="AddressState" alignment="TOP_LEFT" maxWidth="-Infinity" minWidth="30.0" prefWidth="30.0" GridPane.columnIndex="1" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="7" />
@@ -35,13 +35,12 @@
         <HBox id="HBox" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" prefWidth="-1.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="15">
           <children>
             <Button alignment="CENTER" defaultButton="true" minWidth="-Infinity" mnemonicParsing="false" prefWidth="80.0" rotate="0.0" text="Add" />
-            <Button cancelButton="true" contentDisplay="LEFT" minWidth="-Infinity" mnemonicParsing="false" onAction="#Clear" prefWidth="80.0" text="Clear" />
+            <Button cancelButton="true" contentDisplay="LEFT" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleClearButtonAction" prefWidth="80.0" text="Clear" />
           </children>
         </HBox>
         <ChoiceBox fx:id="StatusChoiceBox" mouseTransparent="false" pickOnBounds="false" prefWidth="146.49990844726562" GridPane.columnIndex="1" GridPane.rowIndex="13">
           <items>
-            <FXCollections fx:factory="observableArrayList">
-            </FXCollections>
+            <FXCollections fx:factory="observableArrayList" />
           </items>
         </ChoiceBox>
         <Label text="Status :" GridPane.columnIndex="0" GridPane.rowIndex="13" />
@@ -51,8 +50,7 @@
         <Label text="Brokerage Firm" GridPane.columnIndex="0" GridPane.rowIndex="0" />
         <ComboBox fx:id="brokerageFirmComboBox" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="0">
           <items>
-            <FXCollections fx:factory="observableArrayList">
-            </FXCollections>
+            <FXCollections fx:factory="observableArrayList" />
           </items>
         </ComboBox>
       </children>
@@ -84,6 +82,6 @@
         <Font name="Candara Bold" size="16.0" />
       </font>
     </Label>
-    <Label fx:id="Message" alignment="CENTER" layoutX="17.0" prefHeight="33.0" prefWidth="595.0" AnchorPane.bottomAnchor="3.0" />
+    <Label fx:id="Message" alignment="CENTER" prefHeight="33.0" prefWidth="601.0" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="14.0" />
   </children>
 </AnchorPane>

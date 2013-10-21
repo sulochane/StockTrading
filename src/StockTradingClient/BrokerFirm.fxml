@@ -60,6 +60,6 @@
         <Font name="Candara Bold" size="16.0" />
       </font>
     </Label>
-    <Label fx:id="Message" alignment="CENTER" layoutX="14.0" layoutY="313.0" prefHeight="33.0" prefWidth="534.0" text="Label" />
+    <Label fx:id="Message" alignment="CENTER" prefHeight="33.0" prefWidth="534.0" text="Label" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
   </children>
 </AnchorPane>

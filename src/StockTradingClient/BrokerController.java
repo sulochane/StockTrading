@@ -4,6 +4,7 @@
  */
 package StockTradingClient;
 
+import StockTradingCommon.Enumeration;
 import StockTradingServer.StatusesOptions;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +22,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
+import StockTradingCommon.Enumeration;
+
 /**
  * FXML Controller class
  *
@@ -35,16 +38,44 @@ public class BrokerController implements Initializable {
     @FXML private TextField AddressState;
     @FXML private TextField AddressZip;  
     @FXML private ChoiceBox StatusChoiceBox;    
-    @FXML private ComboBox brokerageFirmComboBox;
-    
-    
+    @FXML private ComboBox brokerageFirmComboBox;   
+    @FXML private Label Message;
     @FXML
-    public void Clear()
-    {
-        this.Clear();        
+    private void handleClearButtonAction(ActionEvent event) {
+        
+        BrokerName.clear();
+        BrokerSSN.clear();
+        AddressStreet.clear();
+        AddressState.clear();
+        AddressCity.clear();
+        AddressZip.clear();       
+        
+        Message.setText(null);
+        
+        StatusChoiceBox.getSelectionModel().selectFirst();
+        brokerageFirmComboBox.getSelectionModel().select(null);
     }
-    @FXML
     
+    @FXML 
+    private void handleAddButtonAction(ActionEvent event) 
+    {
+        StockTradingServer.DatabaseConnector dbConnector = new StockTradingServer.DatabaseConnector();
+        dbConnector.connectToDatabase();
+        
+        /*StockTradingServer.BrokerageFirm brokerageFirm = new StockTradingServer.BrokerageFirm();      
+        
+        
+        boolean status = dbConnector.insertNewBrokerageFirm(brokerageFirm);
+        if (status)
+        {
+            Message.setText(Enumeration.Database.DB_INSERT_SUCCESS);
+        }
+        else
+        {
+            Message.setText(Enumeration.Database.DB_INSERT_SUCCESS);
+        }*/
+        
+    }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -54,21 +85,9 @@ public class BrokerController implements Initializable {
     
     private void PopulateStatus()
     {
-
-        
-        StockTradingServer.DatabaseConnector dbConnector = new StockTradingServer.DatabaseConnector();
-        dbConnector.connectToDatabase();        
-        ArrayList<StatusesOptions> statuses = dbConnector.selectAllStatuses();        
-        
-        StatusChoiceBox.getItems().add(new KeyValuePair(null, "Select Status"));
-
-        for(StatusesOptions s : statuses)
-        {
-            StatusChoiceBox.getItems().add(new KeyValuePair(Integer.toString(s.getId()), s.getName() ));
-        }
-        StatusChoiceBox.getSelectionModel().selectFirst();
-        
-    }
+        Utility utility = new Utility();
+        utility.PopulateStatus(StatusChoiceBox);        
+    }  
     
     private void PopulateBrokerageFirm()
     {
