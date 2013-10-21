@@ -4,6 +4,7 @@
  */
 package StockTradingClient;
 
+import StockTradingServer.StatusesOptions;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -29,7 +30,7 @@ import javafx.stage.Stage;
 public class BrokerController implements Initializable {
 
     @FXML
-    private ChoiceBox statusChoiceBox;
+    private ChoiceBox StatusChoiceBox;
     
     @FXML
     private ComboBox brokerageFirmComboBox;
@@ -50,11 +51,20 @@ public class BrokerController implements Initializable {
     
     private void PopulateStatus()
     {
-        ArrayList<String> status = new ArrayList();
-        status.add("Active");
-        status.add("Inactive");
+
         
-        statusChoiceBox.setItems(FXCollections.observableArrayList(status));
+        StockTradingServer.DatabaseConnector dbConnector = new StockTradingServer.DatabaseConnector();
+        dbConnector.connectToDatabase();        
+        ArrayList<StatusesOptions> statuses = dbConnector.selectAllStatuses();        
+        
+        StatusChoiceBox.getItems().add(new KeyValuePair(null, "Select Status"));
+
+        for(StatusesOptions s : statuses)
+        {
+            StatusChoiceBox.getItems().add(new KeyValuePair(Integer.toString(s.getId()), s.getName() ));
+        }
+        StatusChoiceBox.getSelectionModel().selectFirst();
+        
     }
     
     private void PopulateBrokerageFirm()
