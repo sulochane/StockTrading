@@ -8,6 +8,7 @@ public class BrokerageFirm {
 	private String addressCity;
 	private String addressState;
 	private String addressZip;
+	private String licenceNumber;
 	private String status;
 
 	public int getId() {
@@ -58,6 +59,14 @@ public class BrokerageFirm {
 		this.addressZip = addressZip;
 	}
 
+	public String getLicenceNumber() {
+		return licenceNumber;
+	}
+
+	public void setLicenceNumber(String licenceNumber) {
+		this.licenceNumber = licenceNumber;
+	}
+
 	public String getStatus() {
 		return status;
 	}
@@ -66,15 +75,20 @@ public class BrokerageFirm {
 		this.status = status;
 	}
 
-
 	@Override
 	public String toString() {
 		String out = "BrokerageFirm: ";
 		String delimiter = " ";
-		String endOfString = "\n";
+		String endOfString = "";
 
 		out += "ID: " + this.id + delimiter;
 		out += "Name: " + this.name + delimiter;
+		out += "Street: " + this.addressStreet + delimiter;
+		out += "City: " + this.addressCity + delimiter;
+		out += "State: " + this.addressState + delimiter;
+		out += "Zip: " + this.addressZip + delimiter;
+		out += "Licence: " + this.licenceNumber + delimiter;
+		out += "Status: " + this.status + delimiter;
 
 		out += endOfString;
 
