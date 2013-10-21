@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="474.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="StockTradingClient.CustomerController">
+  <children>
+    <Label layoutX="11.0" prefHeight="-1.0" prefWidth="-1.0" text="Customer Details" textAlignment="CENTER" textFill="#292929" AnchorPane.topAnchor="7.0">
+      <font>
+        <Font name="Candara Bold" size="16.0" />
+      </font>
+    </Label>      
+    <GridPane id="GridPane" alignment="TOP_LEFT" prefWidth="596.0" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="14.0">
+      <children>
+        <TextField fx:id="CustomerName" prefWidth="375.0" promptText="Name of the Customer" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+        <TextField fx:id="CustomerSSN" alignment="CENTER_LEFT" prefWidth="375.0" promptText="SSN Number of the Customer" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <TextField fx:id="AddressStreet" prefWidth="202.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        <TextField fx:id="AddressCity" maxWidth="-Infinity" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+        <TextField fx:id="AddressState" alignment="TOP_LEFT" maxWidth="-Infinity" minWidth="30.0" prefWidth="30.0" GridPane.columnIndex="1" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="6" />
+        <TextField fx:id="AddressZip" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="75.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+        <TextField fx:id="Email" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+        <TextField fx:id="PhoneMobile" maxWidth="-Infinity" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+        <TextField fx:id="PhoneOther" maxWidth="-Infinity" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+        <Label text="Social Security Number (SSN) :" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <Label text="Customer Name :" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <Label text="Address :" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+        <Label text="City :" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+        <Label text="State :" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+        <Label text="ZIP :" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+        <Label text="Contact Details:" GridPane.columnIndex="0" GridPane.rowIndex="3">
+          <font>
+            <Font name="System Bold" size="12.0" />
+          </font>
+        </Label>
+        <Label text="Email :" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+        <Label text="Phone (Mobile) :" GridPane.columnIndex="0" GridPane.rowIndex="9" />
+        <Label text="Phone (Other) :" GridPane.columnIndex="0" GridPane.rowIndex="10" />
+        <HBox id="HBox" alignment="CENTER_RIGHT" maxWidth="+Infinity" prefWidth="-1.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="14">
+          <children>
+            <Button alignment="CENTER" defaultButton="true" minWidth="-Infinity" mnemonicParsing="false" prefWidth="80.0" rotate="0.0" text="Add" />
+            <Button cancelButton="true" contentDisplay="LEFT" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleClearButtonAction" prefWidth="80.0" text="Clear" />
+          </children>
+        </HBox>
+        <ChoiceBox fx:id="StatusChoiceBox" mouseTransparent="false" pickOnBounds="false" prefWidth="146.49990844726562" GridPane.columnIndex="1" GridPane.rowIndex="12">
+          <items>
+            <FXCollections fx:factory="observableArrayList" />
+          </items>
+        </ChoiceBox>
+        <Label text="Status :" GridPane.columnIndex="0" GridPane.rowIndex="12" />
+
+      </children>
+      <columnConstraints>
+        <ColumnConstraints fillWidth="true" hgrow="SOMETIMES" minWidth="170.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+      </columnConstraints>
+      <rowConstraints>
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+      </rowConstraints>
+    </GridPane>
+    <Label fx:id="Message" alignment="CENTER" prefHeight="33.0" prefWidth="601.0" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="14.0" />
+  </children>
+</AnchorPane>

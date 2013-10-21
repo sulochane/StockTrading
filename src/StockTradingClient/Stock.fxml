@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="StockTradingClient.StockController">
+  <children>
+    <Label layoutX="11.0" prefHeight="-1.0" prefWidth="-1.0" text="Stock Details" textAlignment="CENTER" textFill="#292929" AnchorPane.topAnchor="7.0">
+      <font>
+        <Font name="Candara Bold" size="16.0" />
+      </font>
+    </Label>
+    <GridPane id="GridPane" alignment="TOP_LEFT" prefWidth="595.0" AnchorPane.bottomAnchor="103.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="14.0">
+      <children>
+        <TextField fx:id="StockCompany" prefWidth="375.0" promptText="Offering company" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <TextField fx:id="StockName" prefWidth="375.0" promptText="Stock Name" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <TextField fx:id="Price" prefWidth="25.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        <TextField fx:id="Quantity" prefWidth="25.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+        <Label text="Stock Company :" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <Label text="Stock Name :" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <Label text="Initial Price :" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+        <Label text="Quantity Offered :" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+        <HBox id="HBox" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" prefWidth="-1.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="11">
+          <children>
+            <Button alignment="CENTER" defaultButton="true" minWidth="-Infinity" mnemonicParsing="false" prefWidth="80.0" rotate="0.0" text="Add" />
+            <Button cancelButton="true" contentDisplay="LEFT" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleClearButtonAction" prefWidth="80.0" text="Clear" />
+          </children>
+        </HBox>
+        <Label text="Status :" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+        <ChoiceBox fx:id="StatusChoiceBox" mouseTransparent="false" pickOnBounds="false" prefWidth="146.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+          <items>
+            <FXCollections fx:factory="observableArrayList" />
+          </items>
+        </ChoiceBox>
+      </children>
+      <columnConstraints>
+        <ColumnConstraints fillWidth="true" hgrow="SOMETIMES" minWidth="170.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+      </columnConstraints>
+      <rowConstraints>
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+      </rowConstraints>
+    </GridPane>
+    <Label fx:id="Message" alignment="CENTER" prefHeight="33.0" prefWidth="595.0" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="-1.0" />
+  </children>
+</AnchorPane>
