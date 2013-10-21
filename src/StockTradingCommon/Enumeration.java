@@ -13,7 +13,10 @@ public  class Enumeration {
 
     public static class Database
     {
-        public final static String    DB_INSERT_SUCCESS = "Insert to the database success.";
+        public final static String    DB_INSERT_SUCCESS = "Record inserted successfully.";
         public final static String    DB_INSERT_FAILURE = "Failed to insert a record.";
+        
+        public final static String    DB_UPDATE_SUCCESS = "Record updated successfully.";        
+        public final static String    DB_UPDATE_FAILURE = "Failed to update a record.";
     }
 }
