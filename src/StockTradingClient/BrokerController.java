@@ -17,8 +17,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Scene;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -29,11 +28,15 @@ import javafx.stage.Stage;
  */
 public class BrokerController implements Initializable {
 
-    @FXML
-    private ChoiceBox StatusChoiceBox;
+    @FXML private TextField BrokerName;
+    @FXML private TextField BrokerSSN;
+    @FXML private TextField AddressStreet;
+    @FXML private TextField AddressCity;
+    @FXML private TextField AddressState;
+    @FXML private TextField AddressZip;  
+    @FXML private ChoiceBox StatusChoiceBox;    
+    @FXML private ComboBox brokerageFirmComboBox;
     
-    @FXML
-    private ComboBox brokerageFirmComboBox;
     
     @FXML
     public void Clear()
