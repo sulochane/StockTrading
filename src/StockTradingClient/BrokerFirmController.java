@@ -4,26 +4,17 @@
  */
 package StockTradingClient;
 
-import com.sun.javafx.collections.ImmutableObservableList;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-import javafx.beans.InvalidationListener;
-import javafx.beans.binding.ListBinding;
-import javafx.beans.binding.ListExpression;
-import javafx.beans.property.ListPropertyBase;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.ReadOnlyIntegerProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import StockTradingServer.*;
 
+import javafx.collections.ObservableList;
 /**
  * FXML Controller class
  *
@@ -38,16 +29,55 @@ public class BrokerFirmController implements Initializable {
     @FXML
     private TextField BrokerageFirmLicenseNumber;
     
+    @FXML
+    private TextField AddressStreet;
+    
+    
+    @FXML
+    private TextField AddressState;
+        
+    @FXML
+    private TextField AddressCity;
+            
+    @FXML
+    private TextField AddressZip;
+                
     @FXML 
-    private ChoiceBox statusChoiceBox;
+    private ChoiceBox<KeyValuePair> StatusChoiceBox = new ChoiceBox<KeyValuePair>();
+    
+    @FXML
+    private ComboBox StatusComboBox;
     
     @FXML 
     private void handleAddButtonAction(ActionEvent event) {
         System.out.println("You clicked Add!");
         System.out.println("Broker Name    :" + BrokerageFirmName.getText());
         System.out.println("License Number :" + BrokerageFirmLicenseNumber.getText());
-        System.out.println("Status         :" + statusChoiceBox.getValue());
-       // StockTradingClient.MessageBox.MessageBox.main(null);
+        System.out.println("Address Street :" + BrokerageFirmLicenseNumber.getText());
+        System.out.println("Address City :" + AddressCity.getText());
+        System.out.println("Address State :" + AddressState.getText());
+        System.out.println("Address Zip         :" + AddressZip.getText());        
+
+        StockTradingServer.BrokerageFirm brokerageFirm = new StockTradingServer.BrokerageFirm();
+        brokerageFirm.setName(BrokerageFirmName.getText());
+        brokerageFirm.setAddressStreet(AddressState.getText());
+        brokerageFirm.setAddressCity(AddressCity.getText());
+        brokerageFirm.setAddressState(AddressState.getText());
+        brokerageFirm.setAddressZip(AddressZip.getText());
+        brokerageFirm.setStatus(StatusChoiceBox.getValue().getKey());
+        
+        StockTradingServer.DatabaseConnector dbConnector = new StockTradingServer.DatabaseConnector();
+        dbConnector.connectToDatabase();
+        boolean status = dbConnector.insertNewBrokerageFirm(brokerageFirm);
+        if (status)
+        {
+            System.out.println("Insert success!");
+        }
+        else
+        {
+            System.out.println("Insert Failed!");
+        }
+        
     }
         
     @FXML
@@ -55,7 +85,7 @@ public class BrokerFirmController implements Initializable {
         System.out.println("You clicked clear!");
         BrokerageFirmName.setText(null);
         BrokerageFirmLicenseNumber.setText(null);
-        statusChoiceBox.valueProperty().unbind();
+        StatusChoiceBox.valueProperty().unbind();
     }
         
     @Override
@@ -66,13 +96,18 @@ public class BrokerFirmController implements Initializable {
    
     private void PopulateStatus()
     {
-        ArrayList<String> status = new ArrayList();
-        status.add("Active");
-        status.add("Inactive");
+        StockTradingServer.DatabaseConnector dbConnector = new StockTradingServer.DatabaseConnector();
+        dbConnector.connectToDatabase();        
         
-        statusChoiceBox.setItems(FXCollections.observableArrayList(status));
-    }
+        ArrayList<StatusesOptions> statuses = dbConnector.selectAllStatuses();        
+        
+        StatusChoiceBox.getItems().add(new KeyValuePair(null, "Select Status"));
 
-    
-    
+        for(StatusesOptions s : statuses)
+        {
+            StatusChoiceBox.getItems().add(new KeyValuePair(Integer.toString(s.getId()), s.getName() ));
+        }
+        StatusChoiceBox.getSelectionModel().selectFirst();
+        
+    }   
 }
