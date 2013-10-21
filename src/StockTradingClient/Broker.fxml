@@ -12,8 +12,8 @@
   <children>
     <GridPane id="GridPane" alignment="TOP_LEFT" prefWidth="595.9998337890574" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="14.0">
       <children>
-        <TextField prefWidth="375.0" promptText="Name of the Broker" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-        <TextField alignment="CENTER_LEFT" prefWidth="375.0" promptText="SSN Number of the Broker" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <TextField fx:id="BrokerName" prefWidth="375.0" promptText="Name of the Broker" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <TextField fx:id="BrokerSSN"alignment="CENTER_LEFT" prefWidth="375.0" promptText="SSN Number of the Broker" GridPane.columnIndex="1" GridPane.rowIndex="2" />
         <TextField fx:id="AddressStreet" prefWidth="202.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
         <TextField fx:id="AddressCity" maxWidth="-Infinity" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
         <TextField fx:id="AddressState" alignment="TOP_LEFT" maxWidth="-Infinity" minWidth="30.0" prefWidth="30.0" GridPane.columnIndex="1" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="7" />
