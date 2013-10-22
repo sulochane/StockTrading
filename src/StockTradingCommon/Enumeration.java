@@ -21,4 +21,10 @@ public  class Enumeration {
         public final static String    DB_UPDATE_SUCCESS = "Record updated successfully.";        
         public final static String    DB_UPDATE_FAILURE = "Failed to update a record.";
     }
+    
+    public static class UserRole
+    {
+         public final static int    USER_ROLE_ADMIN = 1;
+         public final static int    USER_ROLE_BROKER = 2;
+    }
 }
