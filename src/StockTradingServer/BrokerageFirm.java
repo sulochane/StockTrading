@@ -95,7 +95,7 @@ public class BrokerageFirm {
 		return out;
 	}
 
-	public Validator validateFirm() {
+	public Validator validate() {
 
 		InputValidation iv = new InputValidation();
 		Validator vResult = new Validator();
