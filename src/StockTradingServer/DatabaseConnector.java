@@ -134,7 +134,7 @@ public class DatabaseConnector {
 	 */
 	public Validator insertNewBrokerageFirm(BrokerageFirm newFirm) {
 		// validate input
-		Validator v = newFirm.validateFirm();
+		Validator v = newFirm.validate();
 		if (!v.isVerified()) {
 			return v;
 		}
@@ -186,8 +186,22 @@ public class DatabaseConnector {
 	 * This function updates a specified brokerage firm with provided
 	 * information from the brokerage class
 	 */
-	public boolean updateBrokerageFirm(int idToUpdate,
+	public Validator updateBrokerageFirm(int idToUpdate,
 			BrokerageFirm firmToUpdate) {
+		// validate input
+		Validator v = firmToUpdate.validate();
+		if (!v.isVerified()) {
+			return v;			
+		}
+		
+		InputValidation iv = new InputValidation();
+		Validator v2 = iv.validateIntGeneral(idToUpdate, "idToUpdate");
+		
+		if(!v2.isVerified()) {
+			return v2;
+		}
+		
+		
 		PreparedStatement st = null;
 
 		String query = "UPDATE BROKERAGE_FIRM_INFO SET NAME = ?, ADDRESSSTREET = ?, ADDRESSCITY = ?, ADDRESSSTATE = ?, ADDRESSZIP = ?, LICENCENUMBER = ?, STATUSID = ? WHERE ID = ?;";
@@ -209,7 +223,9 @@ public class DatabaseConnector {
 			int affectedRows = st.executeUpdate();
 
 			if (affectedRows == 0) {
-				throw new SQLException("Update failed");
+				v.setVerified(false);
+				v.setStatus("Update failed");
+				return v;
 			}
 
 		} catch (SQLException ex) {
@@ -217,7 +233,7 @@ public class DatabaseConnector {
 			lgr.log(Level.WARNING, ex.getMessage(), ex);
 		}
 
-		return true;
+		return v;
 	}
 
 	public ArrayList<StatusesOptions> selectAllStatuses() {
