@@ -12,7 +12,7 @@ public class InputValidation {
 		v.setVerified(true);
 		v.setStatus("");
 
-		if (str.isEmpty()) {
+		if (str == null ||  str.isEmpty()) {
 			v.setVerified(false);
 			v.setStatus(label + " field cannot be empty" + delimiter);
 		} else if (str.length() > stdStrLen) {
