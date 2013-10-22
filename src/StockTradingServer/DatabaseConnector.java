@@ -498,11 +498,13 @@ public class DatabaseConnector {
 		return true;
 	}
 
-	public ArrayList<User> selectUsersAll() {
+	public ArrayList<User> selectBrokersAll() {
 		ArrayList<User> usersAll = new ArrayList<User>();
 		Statement st = null;
 		ResultSet rs = null;
-		String query = "SELECT * FROM USERS;";
+		String query = "SELECT U.*, BFI.ID "
+				+ "FROM USERS AS U, BROKERAGE_FIRM_INFO AS BFI, HAS_FIRM_BROKERS AS HFB "
+				+ "WHERE U.ID = HFB.BROKERID " + "AND HFB.FIRMID = BFI.ID;";
 
 		try {
 			st = this.con.createStatement();
@@ -513,22 +515,26 @@ public class DatabaseConnector {
 				int id = res.getInt(1);
 				String firstName = res.getString(2);
 				String lastName = res.getString(3);
-				String email= res.getString(4);
-				String password = res.getString(5);
-				String salt = res.getString(6);
-				int roleId = res.getInt(7);
-				int statusId = res.getInt(8);
+				String email = res.getString(4);
+				String ssn = res.getString(5);
+				String password = res.getString(6);
+				String salt = res.getString(7);
+				int roleId = res.getInt(8);
+				int statusId = res.getInt(9);
+				int brokerFirmId = res.getInt(10);
 
 				User user = new User();
 				user.setId(id);
 				user.setFirstName(firstName);
 				user.setLastName(lastName);
 				user.setEmail(email);
+				user.setEmail(ssn);
 				user.setPassword(password);
 				user.setSalt(salt);
 				user.setRoleId(roleId);
 				user.setStatusId(statusId);
-				
+				user.setBrokerFirmId(brokerFirmId);
+
 				usersAll.add(user);
 			}
 		} catch (SQLException ex) {
@@ -539,13 +545,15 @@ public class DatabaseConnector {
 		return usersAll;
 	}
 
-	public User selectUser(int idToSelect) {
+	public User selectBrokerUser(int idToSelect) {
 		User user = new User();
 
 		Statement st = null;
 		ResultSet rs = null;
-		String query = "SELECT * FROM USERS WHERE id = \"" + idToSelect
-				+ "\";";
+		String query = "SELECT U.*, BFI.ID "
+				+ "FROM USERS AS U, BROKERAGE_FIRM_INFO AS BFI, HAS_FIRM_BROKERS AS HFB "
+				+ "WHERE U.ID = HFB.BROKERID " + "AND HFB.FIRMID = BFI.ID "
+				+ "AND U.ID = \"" + idToSelect + "\";";
 
 		try {
 			st = this.con.createStatement();
@@ -556,20 +564,24 @@ public class DatabaseConnector {
 			int id = res.getInt(1);
 			String firstName = res.getString(2);
 			String lastName = res.getString(3);
-			String email= res.getString(4);
-			String password = res.getString(5);
-			String salt = res.getString(6);
-			int roleId = res.getInt(7);
-			int statusId = res.getInt(8);
+			String email = res.getString(4);
+			String ssn = res.getString(5);
+			String password = res.getString(6);
+			String salt = res.getString(7);
+			int roleId = res.getInt(8);
+			int statusId = res.getInt(9);
+			int brokerFirmId = res.getInt(10);
 
 			user.setId(id);
 			user.setFirstName(firstName);
 			user.setLastName(lastName);
 			user.setEmail(email);
+			user.setEmail(ssn);
 			user.setPassword(password);
 			user.setSalt(salt);
 			user.setRoleId(roleId);
 			user.setStatusId(statusId);
+			user.setBrokerFirmId(brokerFirmId);
 
 		} catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(DatabaseConnector.class.getName());
@@ -580,24 +592,26 @@ public class DatabaseConnector {
 	}
 
 	public boolean insertNewUser(User newUser) {
-		Statement st = null;
-		ResultSet rs = null;
+		Statement st, st2 = null;
+		ResultSet rs, rs2 = null;
 
-		String query = "INSERT INTO USERS (FIRSTNAME, LASTNAME, EMAIL, PASSWORD, SALT, ROLEID, STATUSID)" + " VALUES ("
-				+ "\"" 
-				+ newUser.getFirstName() 
-				+ "\",\"" 
-				+ newUser.getLastName() 
-				+ "\",\"" 
+		String query = "INSERT INTO USERS (FIRSTNAME, LASTNAME, EMAIL, SSN, PASSWORD, SALT, ROLEID, STATUSID)"
+				+ " VALUES ("
+				+ "\""
+				+ newUser.getFirstName()
+				+ "\",\""
+				+ newUser.getLastName()
+				+ "\",\""
 				+ newUser.getEmail()
-				+ "\",\"" 
+				+ "\",\""
+				+ newUser.getSsn()
+				+ "\",\""
 				+ newUser.getPassword()
-				+ "\",\"" 
+				+ "\",\""
 				+ newUser.getSalt()
-				+ "\",\"" 
+				+ "\",\""
 				+ newUser.getRoleId()
-				+ "\",\"" 
-				+ newUser.getStatusId() + "\")";
+				+ "\",\"" + newUser.getStatusId() + "\")";
 
 		try {
 
@@ -612,7 +626,16 @@ public class DatabaseConnector {
 
 			rs = st.getGeneratedKeys();
 			if (rs.next()) {
-				System.out.println(rs.getLong(1));
+				int insertedUserId = (int) rs.getLong(1);
+
+				String query2 = "INSERT INTO HAS_FIRM_BROKERS (FIRMID, BROKERID, STATUSID)"
+						+ "VALUES (\""
+						+ newUser.getBrokerFirmId()
+						+ "\", \""
+						+ insertedUserId + "\", 1);";
+
+				st.executeUpdate(query);
+
 			} else {
 				throw new SQLException("No generated key obtained.");
 			}
@@ -624,20 +647,52 @@ public class DatabaseConnector {
 
 		return true;
 	}
-	
+
+	public boolean insertFirmBroker(int firmId, int brokerId) {
+		Statement st = null;
+		ResultSet rs = null;
+
+		String query = "INSERT INTO HAS_FIRM_BROKERS (FIRMID, BROKERID, STATUSID)"
+				+ "VALUES (\"" + firmId + "\", 1, 1)";
+
+		try {
+
+			st = this.con.createStatement();
+
+			int affectedRows = st.executeUpdate(query,
+					Statement.RETURN_GENERATED_KEYS);
+
+			if (affectedRows == 0) {
+				throw new SQLException("Insert failed");
+			}
+
+			rs = st.getGeneratedKeys();
+			if (rs.next()) {
+				int insertedId = (int) rs.getLong(1);
+
+			} else {
+				throw new SQLException("No generated key obtained.");
+			}
+
+		} catch (SQLException ex) {
+			Logger lgr = Logger.getLogger(DatabaseConnector.class.getName());
+			lgr.log(Level.WARNING, ex.getMessage(), ex);
+		}
+
+		return true;
+	}
+
 	public boolean updateUser(int idToUpdate, User user) {
 		Statement st = null;
 		ResultSet rs = null;
 
 		String query = "UPDATE USERS SET FIRSTNAME = \"" + user.getFirstName()
-				+ "\", LASTNAME = \"" + user.getLastName() 
-				+ "\", EMAIL = \"" + user.getEmail() 
-				+ "\", PASSWORD = \"" + user.getPassword() 
-				+ "\", SALT = \"" + user.getSalt() 
-				+ "\", PASSWORD = \"" + user.getPassword() 
-				+ "\", ROLEID = \"" + user.getRoleId()
-				+ "\", STATUSID = \"" + user.getStatusId()
-				+ "\" WHERE ID = \"" + idToUpdate + "\";";
+				+ "\", LASTNAME = \"" + user.getLastName() + "\", EMAIL = \""
+				+ user.getEmail() + "\", PASSWORD = \"" + user.getPassword()
+				+ "\", SALT = \"" + user.getSalt() + "\", PASSWORD = \""
+				+ user.getPassword() + "\", ROLEID = \"" + user.getRoleId()
+				+ "\", STATUSID = \"" + user.getStatusId() + "\" WHERE ID = \""
+				+ idToUpdate + "\";";
 
 		try {
 
@@ -686,7 +741,7 @@ public class DatabaseConnector {
 				order.setDateExpiration(dateExpiration);
 				order.setStatusId(statusId);
 				order.setTypeId(typeId);
-				
+
 				ordersAll.add(order);
 			}
 		} catch (SQLException ex) {
@@ -719,7 +774,7 @@ public class DatabaseConnector {
 			Date dateExpiration = res.getDate(6);
 			int statusId = res.getInt(7);
 			int typeId = res.getInt(8);
-			
+
 			order.setOrderId(orderId);
 			order.setBrokerId(brokerId);
 			order.setStockId(stockId);
@@ -728,7 +783,6 @@ public class DatabaseConnector {
 			order.setDateExpiration(dateExpiration);
 			order.setStatusId(statusId);
 			order.setTypeId(typeId);
-			
 
 		} catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(DatabaseConnector.class.getName());
@@ -737,26 +791,28 @@ public class DatabaseConnector {
 
 		return order;
 	}
-	
+
 	public boolean insertNewOrder(Order newOrder) {
 		Statement st = null;
 		ResultSet rs = null;
 
-		String query = "INSERT INTO ORDERS (BROKERID, STOCKID, AMOUNT, DATEISSUED, DATEEXPIRATION, STATUSID, TYPEID)" + " VALUES ("
-				+ "\"" 
+		String query = "INSERT INTO ORDERS (BROKERID, STOCKID, AMOUNT, DATEISSUED, DATEEXPIRATION, STATUSID, TYPEID)"
+				+ " VALUES ("
+				+ "\""
 				+ newOrder.getBrokerId()
-				+ "\",\"" 
+				+ "\",\""
 				+ newOrder.getStockId()
-				+ "\",\"" 
+				+ "\",\""
 				+ newOrder.getAmount()
-				+ "\",\"" 
+				+ "\",\""
 				+ newOrder.getDateIssued()
-				+ "\",\"" 
+				+ "\",\""
 				+ newOrder.getDateExpiration()
-				+ "\",\"" 
+				+ "\",\""
 				+ newOrder.getStatusId()
-				+ "\",\"" 
-				+ newOrder.getTypeId() + "\")";
+				+ "\",\""
+				+ newOrder.getTypeId()
+				+ "\")";
 
 		try {
 
@@ -783,20 +839,18 @@ public class DatabaseConnector {
 
 		return true;
 	}
-		
+
 	public boolean updateOrder(int idToUpdate, Order order) {
 		Statement st = null;
 		ResultSet rs = null;
 
-		String query = "UPDATE ORDERS SET" 
-					   + " BROKERID = \"" + order.getBrokerId()
-					   + "\", STOCKID = \"" + order.getStockId()
-					   + "\", AMOUNT = \"" + order.getAmount()
-					   + "\", DATEISSUED = \"" + order.getDateIssued()
-					   + "\", DATEEXPIRATION = \"" + order.getDateExpiration()
-					   + "\", STATUSID = \"" + order.getStatusId()
-					   + "\", TYPEID = \"" + order.getTypeId()
-					   + "\" WHERE ORDERID = \"" + idToUpdate + "\";";
+		String query = "UPDATE ORDERS SET" + " BROKERID = \""
+				+ order.getBrokerId() + "\", STOCKID = \"" + order.getStockId()
+				+ "\", AMOUNT = \"" + order.getAmount() + "\", DATEISSUED = \""
+				+ order.getDateIssued() + "\", DATEEXPIRATION = \""
+				+ order.getDateExpiration() + "\", STATUSID = \""
+				+ order.getStatusId() + "\", TYPEID = \"" + order.getTypeId()
+				+ "\" WHERE ORDERID = \"" + idToUpdate + "\";";
 
 		try {
 
@@ -815,6 +869,5 @@ public class DatabaseConnector {
 
 		return true;
 	}
-	
 
 }

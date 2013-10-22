@@ -5,11 +5,20 @@ public class User {
 	private String firstName;
 	private String lastName;
 	private String email;
+	private String ssn;
 	private String password;
 	private String salt;
 	private int roleId;
 	private int statusId;
 	private int brokerFirmId;
+
+	public String getSsn() {
+		return ssn;
+	}
+
+	public void setSsn(String ssn) {
+		this.ssn = ssn;
+	}
 
 	public String getFirstName() {
 		return firstName;
@@ -74,7 +83,7 @@ public class User {
 	public void setStatusId(int statusId) {
 		this.statusId = statusId;
 	}
-	
+
 	public int getBrokerFirmId() {
 		return brokerFirmId;
 	}
@@ -102,7 +111,5 @@ public class User {
 
 		return out;
 	}
-
-
 
 }
