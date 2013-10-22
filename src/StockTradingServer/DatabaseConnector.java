@@ -688,7 +688,8 @@ public class DatabaseConnector {
 
 		String query = "UPDATE USERS SET FIRSTNAME = \"" + user.getFirstName()
 				+ "\", LASTNAME = \"" + user.getLastName() + "\", EMAIL = \""
-				+ user.getEmail() + "\", PASSWORD = \"" + user.getPassword()
+				+ user.getEmail() + "\", SSN = \""
+						+ user.getSsn() + "\", PASSWORD = \"" + user.getPassword()
 				+ "\", SALT = \"" + user.getSalt() + "\", PASSWORD = \""
 				+ user.getPassword() + "\", ROLEID = \"" + user.getRoleId()
 				+ "\", STATUSID = \"" + user.getStatusId() + "\" WHERE ID = \""
