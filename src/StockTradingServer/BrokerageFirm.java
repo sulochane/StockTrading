@@ -95,7 +95,7 @@ public class BrokerageFirm {
 		return out;
 	}
 
-	public Validator validateObject(BrokerageFirm firm) {
+	public Validator validateFirm() {
 
 		InputValidation iv = new InputValidation();
 		Validator vResult = new Validator();
@@ -105,40 +105,40 @@ public class BrokerageFirm {
 		String status = "";
 
 		// 1. validate name
-		vName = iv.validateString(firm.getName(), "Name");
+		vName = iv.validateString(this.getName(), "Name");
 		verified &= vName.isVerified();
 		status += vName.getStatus();
 
 		// 2. validate addressStreet
-		vAddressStreet = iv.validateString(firm.getAddressStreet(),
+		vAddressStreet = iv.validateString(this.getAddressStreet(),
 				"Address Street");
 		verified &= vAddressStreet.isVerified();
 		status += vAddressStreet.getStatus();
 
 		// 3. validate addressCity
-		vAddressCity = iv.validateString(firm.getAddressCity(), "Address City");
+		vAddressCity = iv.validateString(this.getAddressCity(), "Address City");
 		verified &= vAddressCity.isVerified();
 		status += vAddressCity.getStatus();
 
 		// 4. validate addressState
-		vAddressState = iv.validateString(firm.getAddressState(),
+		vAddressState = iv.validateString(this.getAddressState(),
 				"Address State");
 		verified &= vAddressState.isVerified();
 		status += vAddressState.getStatus();
 
 		// 5. validate addressZip
-		vAddressZip = iv.validateString(firm.getAddressZip(), "Address Zip");
+		vAddressZip = iv.validateString(this.getAddressZip(), "Address Zip");
 		verified &= vAddressZip.isVerified();
 		status += vAddressZip.getStatus();
 
 		// 6. license number
-		vLicenceNumber = iv.validateString(firm.getLicenceNumber(),
+		vLicenceNumber = iv.validateString(this.getLicenceNumber(),
 				"Licence Number");
 		verified &= vLicenceNumber.isVerified();
 		status += vLicenceNumber.getStatus();
 
 		// 7. status
-		vStatus = iv.validateInt(firm.getStatus(), "Status");
+		vStatus = iv.validateInt(this.getStatus(), "Status");
 		verified &= vStatus.isVerified();
 		status += vStatus.getStatus();
 
