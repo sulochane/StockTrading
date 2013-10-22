@@ -12,7 +12,7 @@ public class InputValidation {
 		v.setVerified(true);
 		v.setStatus("");
 
-		if (str == null ||  str.isEmpty()) {
+		if (str.isEmpty()) {
 			v.setVerified(false);
 			v.setStatus(label + " field cannot be empty" + delimiter);
 		} else if (str.length() > stdStrLen) {
@@ -38,6 +38,22 @@ public class InputValidation {
 			v.setStatus(label
 					+ " has illegal value. Something nasty is happening."
 					+ delimiter);
+		}
+
+		return v;
+	}
+
+	public Validator validateIntGeneral(int input, String label) {
+		String delimiter = "\n";
+		Validator v = new Validator();
+
+		v.setVerified(true);
+		v.setStatus("");
+
+		if (input < 1) {
+			v.setVerified(false);
+			v.setStatus("Error " + label
+					+ " is not a proper int. Error happened.");
 		}
 
 		return v;
