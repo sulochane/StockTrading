@@ -1,5 +1,8 @@
 package StockTradingServer;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import StockTradingCommon.Enumeration;
 
 public class InputValidation {
@@ -50,10 +53,31 @@ public class InputValidation {
 		v.setVerified(true);
 		v.setStatus("");
 
+		
 		if (input < 1) {
 			v.setVerified(false);
 			v.setStatus("Error " + label
 					+ " is not a proper int. Error happened.");
+		}
+
+		return v;
+	}
+
+	public Validator validateEmail(String str, String label) {
+		String delimiter = "\n";
+		Validator v = new Validator();
+
+		Pattern pattern = Pattern
+				.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+						+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+		Matcher matcher = pattern.matcher(str);
+
+		v.setVerified(false);
+		v.setStatus(label + " is not an email of proper form" + delimiter);
+
+		if (matcher.matches()) {
+			v.setVerified(true);
+			v.setStatus("");
 		}
 
 		return v;

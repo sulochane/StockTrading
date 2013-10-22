@@ -92,20 +92,72 @@ public class User {
 		this.brokerFirmId = brokerFirmId;
 	}
 
+	public Validator validate() {
+
+		InputValidation iv = new InputValidation();
+		Validator vResult = new Validator();
+		Validator vFirstName, vLastName, vEmail, vSsn, vPassword, vStatusId, vFirmId;
+
+		Boolean verified = true;
+		String status = "";
+
+		// 1. validate first name
+		vFirstName = iv.validateString(this.getFirstName(), "First Name");
+		verified &= vFirstName.isVerified();
+		status += vFirstName.getStatus();
+
+		// 2. validate last name
+		vLastName = iv.validateString(this.getLastName(), "First Name");
+		verified &= vLastName.isVerified();
+		status += vLastName.getStatus();
+
+		// 3. validate email
+		vEmail = iv.validateEmail(this.getEmail(), "Email");
+		verified &= vEmail.isVerified();
+		status += vEmail.getStatus();
+
+		// 4. validate ssn
+		vSsn = iv.validateString(this.getSsn(), "Ssn");
+		verified &= vSsn.isVerified();
+		status += vSsn.getStatus();
+
+		// 5. validate ssn
+		vPassword = iv.validateString(this.getPassword(), "Password");
+		verified &= vPassword.isVerified();
+		status += vPassword.getStatus();
+
+		// 6. status id
+		vStatusId = iv.validateIntGeneral(this.getStatusId(), "StatusId");
+		verified &= vStatusId.isVerified();
+		status += vStatusId.getStatus();
+
+		// 7. firm id
+		vFirmId = iv.validateIntGeneral(this.getBrokerFirmId(), "FirmId");
+		verified &= vFirmId.isVerified();
+		status += vFirmId.getStatus();
+
+		vResult.setVerified(verified);
+		vResult.setStatus(status);
+
+		return vResult;
+	}
+
 	@Override
 	public String toString() {
 		String out = "User: ";
 		String delimiter = " ";
-		String endOfString = "";
+		String endOfString = "\n";
 
-		out += "ID: " + this.id + delimiter;
-		out += "FirstName: " + this.firstName + delimiter;
-		out += "LastName: " + this.lastName + delimiter;
-		out += "Email: " + this.email + delimiter;
-		out += "Password: " + this.password + delimiter;
-		out += "Salt: " + this.salt + delimiter;
-		out += "RoleId: " + this.roleId + delimiter;
-		out += "StatusId: " + this.statusId + delimiter;
+		out += "ID: " + this.getId() + delimiter;
+		out += "FirstName: " + this.getFirstName() + delimiter;
+		out += "LastName: " + this.getLastName() + delimiter;
+		out += "Email: " + this.getEmail() + delimiter;
+		out += "SSN: " + this.getSsn() + delimiter;
+		out += "Password: " + this.getPassword() + delimiter;
+		out += "Salt: " + this.getSalt() + delimiter;
+		out += "RoleId: " + this.getRoleId() + delimiter;
+		out += "StatusId: " + this.getStatusId() + delimiter;
+		out += "FirmId: " + this.getBrokerFirmId() + delimiter;
 
 		out += endOfString;
 
