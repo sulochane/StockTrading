@@ -132,14 +132,21 @@ public class DatabaseConnector {
 	 * This function adds a new brokerage firm to the database from the given
 	 * class instance MySQL injection checked
 	 */
-	public boolean insertNewBrokerageFirm(BrokerageFirm newFirm) {
+	public Validator insertNewBrokerageFirm(BrokerageFirm newFirm) {
+		// validate input
+		Validator v = newFirm.validateFirm();
+		if (!v.isVerified()) {
+			return v;
+		}
+
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		String query = "INSERT INTO BROKERAGE_FIRM_INFO (NAME, ADDRESSSTREET, ADDRESSCITY, ADDRESSSTATE, ADDRESSZIP, LICENCENUMBER, STATUSID) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
 		try {
 
-			st = this.con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+			st = this.con.prepareStatement(query,
+					Statement.RETURN_GENERATED_KEYS);
 			st.setString(1, newFirm.getName());
 			st.setString(2, newFirm.getAddressStreet());
 			st.setString(3, newFirm.getAddressCity());
@@ -151,29 +158,33 @@ public class DatabaseConnector {
 			int affectedRows = st.executeUpdate();
 
 			if (affectedRows == 0) {
-				throw new SQLException(
-						"Creating user failed, no rows affected.");
+				v.setVerified(false);
+				v.setStatus("Could not insert into the table");
+				return v;
 			}
 
-			rs = st.getGeneratedKeys();
-			if (rs.next()) {
-				System.out.println(rs.getLong(1));
-			} else {
-				throw new SQLException(
-						"Creating user failed, no generated key obtained.");
-			}
+			//			rs = st.getGeneratedKeys();
+			//			if (rs.next()) {
+			//				System.out.println(rs.getLong(1));
+			//			} else {
+			//				throw new SQLException(
+			//						"Creating user failed, no generated key obtained.");
+			//			}
 
 		} catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(DatabaseConnector.class.getName());
 			lgr.log(Level.WARNING, ex.getMessage(), ex);
 		}
 
-		return true;
+		v.setVerified(true);
+		v.setStatus("Success");
+
+		return v;
 	}
 
 	/*
-	 * This function updates a specified brokerage firm with 
-	 * provided information from the brokerage class 
+	 * This function updates a specified brokerage firm with provided
+	 * information from the brokerage class
 	 */
 	public boolean updateBrokerageFirm(int idToUpdate,
 			BrokerageFirm firmToUpdate) {
@@ -183,7 +194,8 @@ public class DatabaseConnector {
 
 		try {
 
-			st = this.con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+			st = this.con.prepareStatement(query,
+					Statement.RETURN_GENERATED_KEYS);
 
 			st.setString(1, firmToUpdate.getName());
 			st.setString(2, firmToUpdate.getAddressStreet());
