@@ -2,6 +2,7 @@ package StockTradingServer;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -13,6 +14,7 @@ import java.util.logging.Logger;
 public class DatabaseConnector {
 	private Connection con = null;
 
+	// connect to DB
 	public DatabaseConnector() {
 		// Basic configuration - to be moved to config file
 		String url = "jdbc:mysql://192.30.164.204:3306/repo6545";
@@ -37,6 +39,9 @@ public class DatabaseConnector {
 		this.con = con;
 	}
 
+	/*
+	 * This function returns an array list of the brokerage firms
+	 */
 	public ArrayList<BrokerageFirm> selectBrokerageFirmsAll() {
 		ArrayList<BrokerageFirm> brokerageFirms = new ArrayList<BrokerageFirm>();
 		Statement st = null;
@@ -56,7 +61,7 @@ public class DatabaseConnector {
 				String addressState = res.getString(5);
 				String addressZip = res.getString(6);
 				String licenceNumber = res.getString(7);
-				String status = res.getString(8);
+				int status = res.getInt(8);
 
 				BrokerageFirm brokerageFirm = new BrokerageFirm();
 				brokerageFirm.setId(id);
@@ -79,19 +84,24 @@ public class DatabaseConnector {
 		return brokerageFirms;
 	}
 
+	/*
+	 * This function returns a single brokerage firm based on a given id MySQL
+	 * injection protection
+	 */
 	public BrokerageFirm selectBrokerageFirm(int idToSelect) {
 		BrokerageFirm brokerageFirm = new BrokerageFirm();
-
-		Statement st = null;
+		PreparedStatement st = null;
 		ResultSet rs = null;
-		String query = "SELECT * FROM BROKERAGE_FIRM_INFO WHERE ID = \""
-				+ idToSelect + "\" ;";
+		String query = "SELECT * FROM BROKERAGE_FIRM_INFO WHERE ID = ?;";
 
 		try {
-			st = this.con.createStatement();
-			ResultSet res = st.executeQuery(query);
+			st = this.con.prepareStatement(query);
+			st.setInt(1, idToSelect);
+
+			ResultSet res = st.executeQuery();
 
 			res.next();
+
 			int id = res.getInt(1);
 			String name = res.getString(2);
 			String addressStreet = res.getString(3);
@@ -99,7 +109,7 @@ public class DatabaseConnector {
 			String addressState = res.getString(5);
 			String addressZip = res.getString(6);
 			String licenceNumber = res.getString(7);
-			String status = res.getString(8);
+			int status = res.getInt(8);
 
 			brokerageFirm.setId(id);
 			brokerageFirm.setName(name);
@@ -118,33 +128,27 @@ public class DatabaseConnector {
 		return brokerageFirm;
 	}
 
+	/*
+	 * This function adds a new brokerage firm to the database from the given
+	 * class instance MySQL injection checked
+	 */
 	public boolean insertNewBrokerageFirm(BrokerageFirm newFirm) {
-		Statement st = null;
+		PreparedStatement st = null;
 		ResultSet rs = null;
-
-		String query = "INSERT INTO BROKERAGE_FIRM_INFO (NAME, ADDRESSSTREET,ADDRESSCITY, ADDRESSSTATE, ADDRESSZIP, LICENCENUMBER, STATUSID)"
-				+ " VALUES ("
-				+ "\""
-				+ newFirm.getName()
-				+ "\",\""
-				+ newFirm.getAddressStreet()
-				+ "\",\""
-				+ newFirm.getAddressCity()
-				+ "\",\""
-				+ newFirm.getAddressState()
-				+ "\",\""
-				+ newFirm.getAddressZip()
-				+ "\",\""
-				+ newFirm.getLicenceNumber()
-				+ "\",\""
-				+ newFirm.getStatus() + "\")";
+		String query = "INSERT INTO BROKERAGE_FIRM_INFO (NAME, ADDRESSSTREET, ADDRESSCITY, ADDRESSSTATE, ADDRESSZIP, LICENCENUMBER, STATUSID) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
 		try {
 
-			st = this.con.createStatement();
+			st = this.con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+			st.setString(1, newFirm.getName());
+			st.setString(2, newFirm.getAddressStreet());
+			st.setString(3, newFirm.getAddressCity());
+			st.setString(4, newFirm.getAddressState());
+			st.setString(5, newFirm.getAddressZip());
+			st.setString(6, newFirm.getLicenceNumber());
+			st.setInt(7, newFirm.getStatus());
 
-			int affectedRows = st.executeUpdate(query,
-					Statement.RETURN_GENERATED_KEYS);
+			int affectedRows = st.executeUpdate();
 
 			if (affectedRows == 0) {
 				throw new SQLException(
@@ -167,26 +171,30 @@ public class DatabaseConnector {
 		return true;
 	}
 
+	/*
+	 * This function updates a specified brokerage firm with 
+	 * provided information from the brokerage class 
+	 */
 	public boolean updateBrokerageFirm(int idToUpdate,
 			BrokerageFirm firmToUpdate) {
-		Statement st = null;
-		ResultSet rs = null;
+		PreparedStatement st = null;
 
-		String query = "UPDATE BROKERAGE_FIRM_INFO SET" + " NAME = \""
-				+ firmToUpdate.getName() + "\", ADDRESSSTREET = \""
-				+ firmToUpdate.getAddressStreet() + "\", ADDRESSCITY = \""
-				+ firmToUpdate.getAddressCity() + "\", ADDRESSSTATE = \""
-				+ firmToUpdate.getAddressState() + "\", ADDRESSZIP = \""
-				+ firmToUpdate.getAddressZip() + "\", LICENCENUMBER = \""
-				+ firmToUpdate.getLicenceNumber() + "\", STATUSID = \""
-				+ firmToUpdate.getStatus() + "\" WHERE ID = \"" + idToUpdate
-				+ "\";";
+		String query = "UPDATE BROKERAGE_FIRM_INFO SET NAME = ?, ADDRESSSTREET = ?, ADDRESSCITY = ?, ADDRESSSTATE = ?, ADDRESSZIP = ?, LICENCENUMBER = ?, STATUSID = ? WHERE ID = ?;";
 
 		try {
 
-			st = this.con.createStatement();
+			st = this.con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
-			int affectedRows = st.executeUpdate(query);
+			st.setString(1, firmToUpdate.getName());
+			st.setString(2, firmToUpdate.getAddressStreet());
+			st.setString(3, firmToUpdate.getAddressCity());
+			st.setString(4, firmToUpdate.getAddressState());
+			st.setString(5, firmToUpdate.getAddressZip());
+			st.setString(6, firmToUpdate.getLicenceNumber());
+			st.setInt(7, firmToUpdate.getStatus());
+			st.setInt(8, idToUpdate);
+
+			int affectedRows = st.executeUpdate();
 
 			if (affectedRows == 0) {
 				throw new SQLException("Update failed");
@@ -576,7 +584,7 @@ public class DatabaseConnector {
 			user.setFirstName(firstName);
 			user.setLastName(lastName);
 			user.setEmail(email);
-			user.setSsn(ssn);
+			user.setEmail(ssn);
 			user.setPassword(password);
 			user.setSalt(salt);
 			user.setRoleId(roleId);
@@ -688,8 +696,7 @@ public class DatabaseConnector {
 
 		String query = "UPDATE USERS SET FIRSTNAME = \"" + user.getFirstName()
 				+ "\", LASTNAME = \"" + user.getLastName() + "\", EMAIL = \""
-				+ user.getEmail() + "\", SSN = \""
-						+ user.getSsn() + "\", PASSWORD = \"" + user.getPassword()
+				+ user.getEmail() + "\", PASSWORD = \"" + user.getPassword()
 				+ "\", SALT = \"" + user.getSalt() + "\", PASSWORD = \""
 				+ user.getPassword() + "\", ROLEID = \"" + user.getRoleId()
 				+ "\", STATUSID = \"" + user.getStatusId() + "\" WHERE ID = \""

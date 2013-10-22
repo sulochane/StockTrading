@@ -9,7 +9,7 @@ public class BrokerageFirm {
 	private String addressState;
 	private String addressZip;
 	private String licenceNumber;
-	private String status;
+	private int status;
 
 	public int getId() {
 		return id;
@@ -67,11 +67,11 @@ public class BrokerageFirm {
 		this.licenceNumber = licenceNumber;
 	}
 
-	public String getStatus() {
+	public int getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(int status) {
 		this.status = status;
 	}
 
@@ -93,6 +93,60 @@ public class BrokerageFirm {
 		out += endOfString;
 
 		return out;
+	}
+
+	public Validator validateObject(BrokerageFirm firm) {
+
+		InputValidation iv = new InputValidation();
+		Validator vResult = new Validator();
+		Validator vName, vAddressStreet, vAddressCity, vAddressState, vAddressZip, vLicenceNumber, vStatus;
+
+		Boolean verified = true;
+		String status = "";
+
+		// 1. validate name
+		vName = iv.validateString(firm.getName(), "Name");
+		verified &= vName.isVerified();
+		status += vName.getStatus();
+
+		// 2. validate addressStreet
+		vAddressStreet = iv.validateString(firm.getAddressStreet(),
+				"Address Street");
+		verified &= vAddressStreet.isVerified();
+		status += vAddressStreet.getStatus();
+
+		// 3. validate addressCity
+		vAddressCity = iv.validateString(firm.getAddressCity(), "Address City");
+		verified &= vAddressCity.isVerified();
+		status += vAddressCity.getStatus();
+
+		// 4. validate addressState
+		vAddressState = iv.validateString(firm.getAddressState(),
+				"Address State");
+		verified &= vAddressState.isVerified();
+		status += vAddressState.getStatus();
+
+		// 5. validate addressZip
+		vAddressZip = iv.validateString(firm.getAddressZip(), "Address Zip");
+		verified &= vAddressZip.isVerified();
+		status += vAddressZip.getStatus();
+
+		// 6. license number
+		vLicenceNumber = iv.validateString(firm.getLicenceNumber(),
+				"Licence Number");
+		verified &= vLicenceNumber.isVerified();
+		status += vLicenceNumber.getStatus();
+
+		// 7. status
+		vStatus = iv.validateInt(firm.getStatus(), "Status");
+		verified &= vStatus.isVerified();
+		status += vStatus.getStatus();
+
+		vResult.setVerified(verified);
+		vResult.setStatus(status);
+
+		return vResult;
+
 	}
 
 }
