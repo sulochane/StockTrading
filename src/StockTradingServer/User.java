@@ -9,6 +9,7 @@ public class User {
 	private String salt;
 	private int roleId;
 	private int statusId;
+	private int brokerFirmId;
 
 	public String getFirstName() {
 		return firstName;
@@ -73,6 +74,14 @@ public class User {
 	public void setStatusId(int statusId) {
 		this.statusId = statusId;
 	}
+	
+	public int getBrokerFirmId() {
+		return brokerFirmId;
+	}
+
+	public void setBrokerFirmId(int brokerFirmId) {
+		this.brokerFirmId = brokerFirmId;
+	}
 
 	@Override
 	public String toString() {
@@ -93,5 +102,7 @@ public class User {
 
 		return out;
 	}
+
+
 
 }
