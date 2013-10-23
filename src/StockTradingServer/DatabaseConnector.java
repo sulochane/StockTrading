@@ -325,7 +325,7 @@ public class DatabaseConnector {
 				user.setFirstName(firstName);
 				user.setLastName(lastName);
 				user.setEmail(email);
-				user.setEmail(ssn);
+				user.setSsn(ssn);
 				user.setPassword(password);
 				user.setSalt(salt);
 				user.setRoleId(roleId);
