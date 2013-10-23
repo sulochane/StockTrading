@@ -45,4 +45,9 @@ public class Enumeration {
             
 
         }
+        
+        public static class InputValidation
+        {
+            public final static String INPUT_VALIDATION_INVAILD_DOUBLE_FORMAT = "Invalid number format, should be #,##.0.00";
+        }
 }
