@@ -1,5 +1,6 @@
 package StockTradingServer;
 
+import java.sql.Timestamp;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,11 +54,41 @@ public class InputValidation {
 		v.setVerified(true);
 		v.setStatus("");
 
-		
 		if (input < 1) {
 			v.setVerified(false);
 			v.setStatus("Error " + label
-					+ " is not a proper int. Error happened.");
+					+ " is not a proper int. Error happened." + delimiter);
+		}
+
+		return v;
+	}
+
+	public Validator validateDoubleGeneral(double input, String label) {
+		String delimiter = "\n";
+		Validator v = new Validator();
+
+		v.setVerified(true);
+		v.setStatus("");
+
+		if (input <= 0) {
+			v.setVerified(false);
+			v.setStatus("Error " + label
+					+ " is not a proper double. Error happened." + delimiter);
+		}
+
+		return v;
+	}
+
+	public Validator validateTimestampGeneral(Timestamp input, String label) {
+		String delimiter = "\n";
+		Validator v = new Validator();
+
+		v.setVerified(true);
+		v.setStatus("");
+
+		if (input == null) {
+			v.setVerified(false);
+			v.setStatus("Error " + label + " is not a proper date." + delimiter);
 		}
 
 		return v;

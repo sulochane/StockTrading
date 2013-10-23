@@ -1,18 +1,22 @@
 package StockTradingServer;
 
-import java.util.Date;
+
+import java.sql.Timestamp;
+
 
 
 
 public class Order {
 	private int orderId;
+	private int typeId;
 	private int brokerId;
+	private int customerId;
 	private int stockId;
 	private int amount;
-	private Date dateIssued;
-	private Date dateExpiration;
+	private double price;
+	private Timestamp dateIssued;
+	private Timestamp dateExpiration;
 	private int statusId;
-	private int typeId;
 
 	public int getOrderId() {
 		return orderId;
@@ -22,12 +26,28 @@ public class Order {
 		this.orderId = orderId;
 	}
 
+	public int getTypeId() {
+		return typeId;
+	}
+
+	public void setTypeId(int typeId) {
+		this.typeId = typeId;
+	}
+
 	public int getBrokerId() {
 		return brokerId;
 	}
 
 	public void setBrokerId(int brokerId) {
 		this.brokerId = brokerId;
+	}
+
+	public int getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(int customerId) {
+		this.customerId = customerId;
 	}
 
 	public int getStockId() {
@@ -46,19 +66,27 @@ public class Order {
 		this.amount = amount;
 	}
 
-	public Date getDateIssued() {
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public Timestamp getDateIssued() {
 		return dateIssued;
 	}
 
-	public void setDateIssued(Date dateIssued) {
+	public void setDateIssued(Timestamp dateIssued) {
 		this.dateIssued = dateIssued;
 	}
 
-	public Date getDateExpiration() {
+	public Timestamp getDateExpiration() {
 		return dateExpiration;
 	}
 
-	public void setDateExpiration(Date dateExpiration) {
+	public void setDateExpiration(Timestamp dateExpiration) {
 		this.dateExpiration = dateExpiration;
 	}
 
@@ -70,32 +98,86 @@ public class Order {
 		this.statusId = statusId;
 	}
 
-	public int getTypeId() {
-		return typeId;
-	}
+	public Validator validate() {
 
-	public void setTypeId(int typeId) {
-		this.typeId = typeId;
+		InputValidation iv = new InputValidation();
+		Validator vResult = new Validator();
+		Validator vTypeId, vBrokerId, vCustomerId, vStockId, vAmount, vPrice, vDateIssued, vDateExpiration, vStatusId;
+
+		Boolean verified = true;
+		String status = "";
+
+		// 1. validate orderId
+		vTypeId = iv.validateIntGeneral(this.getTypeId(), "Type");
+		verified &= vTypeId.isVerified();
+		status += vTypeId.getStatus();
+
+		// 2. broker id
+		vBrokerId = iv.validateIntGeneral(this.getBrokerId(), "Broker");
+		verified &= vBrokerId.isVerified();
+		status += vBrokerId.getStatus();
+
+		// 3. customer id
+		vCustomerId = iv.validateIntGeneral(this.getCustomerId(), "Customer");
+		verified &= vCustomerId.isVerified();
+		status += vCustomerId.getStatus();
+
+		// 4. stock id
+		vStockId = iv.validateIntGeneral(this.getStockId(), "Stock");
+		verified &= vStockId.isVerified();
+		status += vStockId.getStatus();
+
+		// 5. amount
+		vAmount = iv.validateDoubleGeneral(this.getAmount(), "Amount");
+		verified &= vAmount.isVerified();
+		status += vAmount.getStatus();
+
+		// 6. price
+		vPrice = iv.validateDoubleGeneral(this.getPrice(), "Price");
+		verified &= vPrice.isVerified();
+		status += vPrice.getStatus();
+
+		// 7. date issued
+		vDateIssued = iv.validateTimestampGeneral(this.getDateIssued(),
+				"Date Issued");
+		verified &= vDateIssued.isVerified();
+		status += vDateIssued.getStatus();
+
+		// 8. date issued
+		vDateExpiration = iv.validateTimestampGeneral(this.getDateExpiration(),
+				"Date Expiration");
+		verified &= vDateExpiration.isVerified();
+		status += vDateExpiration.getStatus();
+
+		// 9. status id
+		vStatusId = iv.validateIntGeneral(this.getStatusId(), "Status Id");
+		verified &= vStatusId.isVerified();
+		status += vStatusId.getStatus();
+
+		vResult.setVerified(verified);
+		vResult.setStatus(status);
+
+		return vResult;
 	}
 
 	@Override
 	public String toString() {
 		String out = "Order: ";
 		String delimiter = " ";
-		String endOfString = "";
+		String endOfString = "\n";
 
-		out += "OrderId: " + this.orderId + delimiter;
-		out += "BrokerId: " + this.brokerId + delimiter;
-		out += "StockId: " + this.stockId + delimiter;
-		out += "Amount: " + this.amount + delimiter;
-		out += "DateIssued: " + this.dateIssued + delimiter;
-		out += "DateExpiration: " + this.dateExpiration + delimiter;
-		out += "DateExpiration: " + this.dateExpiration + delimiter;
-		out += "StatusId: " + this.statusId + delimiter;
-		out += "TypeId: " + this.typeId + delimiter;
+		out += "OrderId: " + this.getOrderId() + delimiter;
+		out += "TypeId: " + this.getTypeId() + delimiter;
+		out += "BrokerId: " + this.getBrokerId() + delimiter;
+		out += "CustomerId: " + this.getCustomerId() + delimiter;
+		out += "StockId: " + this.getStockId() + delimiter;
+		out += "Amount: " + this.getAmount() + delimiter;
+		out += "Price: " + this.getPrice() + delimiter;
+		out += "DateIssued: " + this.getDateIssued() + delimiter;
+		out += "DateExpiration: " + this.getDateExpiration() + delimiter;
+		out += "StatusId: " + this.getStatusId() + delimiter;
 		out += endOfString;
 
 		return out;
 	}
-
 }
