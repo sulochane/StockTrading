@@ -12,6 +12,7 @@ public class User {
 	private int statusId;
 	private int brokerFirmId;
 
+
 	public String getSsn() {
 		return ssn;
 	}
@@ -121,10 +122,10 @@ public class User {
 		verified &= vSsn.isVerified();
 		status += vSsn.getStatus();
 
-		// 5. validate ssn
-//		vPassword = iv.validateString(this.getPassword(), "Password");
-//		verified &= vPassword.isVerified();
-//		status += vPassword.getStatus();
+		// 5. validate password
+		// vPassword = iv.validateString(this.getPassword(), "Password");
+		// verified &= vPassword.isVerified();
+		// status += vPassword.getStatus();
 
 		// 6. status id
 		vStatusId = iv.validateIntGeneral(this.getStatusId(), "StatusId");

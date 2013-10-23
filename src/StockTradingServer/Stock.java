@@ -4,7 +4,8 @@ public class Stock {
 	private int id;
 	private String name;
 	private int amount;
-	private int price;
+	private double price;
+	private int statusId;
 
 	public int getId() {
 		return id;
@@ -30,12 +31,55 @@ public class Stock {
 		this.amount = amount;
 	}
 
-	public int getPrice() {
+	public double getPrice() {
 		return price;
 	}
 
-	public void setPrice(int price) {
+	public void setPrice(double price) {
 		this.price = price;
+	}
+
+	public int getStatusId() {
+		return statusId;
+	}
+
+	public void setStatusId(int statusId) {
+		this.statusId = statusId;
+	}
+
+	public Validator validate() {
+
+		InputValidation iv = new InputValidation();
+		Validator vResult = new Validator();
+		Validator vName, vAmount, vPrice, vStatus;
+
+		Boolean verified = true;
+		String status = "";
+
+		// 1. validate name
+		vName = iv.validateString(this.getName(), "Name");
+		verified &= vName.isVerified();
+		status += vName.getStatus();
+
+		// 2. amount
+		vAmount = iv.validateIntGeneral(this.getAmount(), "Amount");
+		verified &= vAmount.isVerified();
+		status += vAmount.getStatus();
+
+		// 3. price
+		vPrice = iv.validateDoubleGeneral(this.getPrice(), "Price");
+		verified &= vPrice.isVerified();
+		status += vPrice.getStatus();
+
+		// 4. status id
+		vStatus = iv.validateIntGeneral(this.getStatusId(), "Status");
+		verified &= vStatus.isVerified();
+		status += vStatus.getStatus();
+
+		vResult.setVerified(verified);
+		vResult.setStatus(status);
+
+		return vResult;
 	}
 
 	@Override

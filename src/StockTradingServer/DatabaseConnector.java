@@ -1,17 +1,23 @@
 package StockTradingServer;
 
+import java.awt.Label;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import StockTradingCommon.Enumeration;
+
+/*
+ * Dmitriy Karmazin
+ * CSCI-6545
+ */
 
 public class DatabaseConnector {
 	private Connection con = null;
@@ -159,6 +165,9 @@ public class DatabaseConnector {
 
 			int affectedRows = st.executeUpdate();
 
+			StockTradingServer.Logger logger = new StockTradingServer.Logger();
+			logger.logDatabaseActivity(st.toString());
+
 			if (affectedRows == 0) {
 				v.setVerified(false);
 				v.setStatus("Could not insert into the table");
@@ -223,6 +232,9 @@ public class DatabaseConnector {
 
 			int affectedRows = st.executeUpdate();
 
+			StockTradingServer.Logger logger = new StockTradingServer.Logger();
+			logger.logDatabaseActivity(st.toString());
+
 			if (affectedRows == 0) {
 				v.setVerified(false);
 				v.setStatus("Update failed");
@@ -260,19 +272,37 @@ public class DatabaseConnector {
 				String firstName = res.getString(2);
 				String lastName = res.getString(3);
 				String email = res.getString(4);
-				String ssn = res.getString(5);
+				byte[] ssn = res.getBytes(5);
 				String password = res.getString(6);
 				String salt = res.getString(7);
 				int roleId = res.getInt(8);
 				int statusId = res.getInt(9);
 				int brokerFirmId = res.getInt(10);
 
+				// Decrypt sensitive data
+				String iv = StockTradingCommon.Enumeration.Broker.BROKER_ENCRYPT_IV;
+				String key = StockTradingCommon.Enumeration.Broker.BROKER_ENCRYPT_KEY;
+
+				DataEncryptor de = new DataEncryptor();
+				de.setIV(iv);
+
+				String decryptedSsn = "";
+				try {
+					decryptedSsn = de.decrypt(ssn, key);
+
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					// e.printStackTrace();
+					decryptedSsn = "err";
+				}
+				// End sensitive data decryption
+
 				User user = new User();
 				user.setId(id);
 				user.setFirstName(firstName);
 				user.setLastName(lastName);
 				user.setEmail(email);
-				user.setEmail(ssn);
+				user.setSsn(decryptedSsn);
 				user.setPassword(password);
 				user.setSalt(salt);
 				user.setRoleId(roleId);
@@ -313,19 +343,37 @@ public class DatabaseConnector {
 				String firstName = res.getString(2);
 				String lastName = res.getString(3);
 				String email = res.getString(4);
-				String ssn = res.getString(5);
+				byte[] ssn = res.getBytes(5);
 				String password = res.getString(6);
 				String salt = res.getString(7);
 				int roleId = res.getInt(8);
 				int statusId = res.getInt(9);
 				int brokerFirmId = res.getInt(10);
 
+				// Decrypt sensitive data
+				String iv = StockTradingCommon.Enumeration.Broker.BROKER_ENCRYPT_IV;
+				String key = StockTradingCommon.Enumeration.Broker.BROKER_ENCRYPT_KEY;
+
+				DataEncryptor de = new DataEncryptor();
+				de.setIV(iv);
+
+				String decryptedSsn = "";
+				try {
+					decryptedSsn = de.decrypt(ssn, key);
+
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					// e.printStackTrace();
+					decryptedSsn = "err";
+				}
+				// End sensitive data decryption
+
 				User user = new User();
 				user.setId(id);
 				user.setFirstName(firstName);
 				user.setLastName(lastName);
 				user.setEmail(email);
-				user.setSsn(ssn);
+				user.setSsn(decryptedSsn);
 				user.setPassword(password);
 				user.setSalt(salt);
 				user.setRoleId(roleId);
@@ -349,7 +397,7 @@ public class DatabaseConnector {
 		User user = new User();
 
 		PreparedStatement st = null;
-		String query = "SELECT * FROM USERS WHERE ROLEID = 2 AND ID = ?";
+		String query = "SELECT * FROM USERS WHERE ID = ?";
 
 		try {
 			st = this.con.prepareStatement(query);
@@ -363,18 +411,36 @@ public class DatabaseConnector {
 			String firstName = res.getString(2);
 			String lastName = res.getString(3);
 			String email = res.getString(4);
-			String ssn = res.getString(5);
+			byte[] ssn = res.getBytes(5);
 			String password = res.getString(6);
 			String salt = res.getString(7);
 			int roleId = res.getInt(8);
 			int statusId = res.getInt(9);
 			int brokerFirmId = res.getInt(10);
 
+			// Decrypt sensitive data
+			String iv = StockTradingCommon.Enumeration.Broker.BROKER_ENCRYPT_IV;
+			String key = StockTradingCommon.Enumeration.Broker.BROKER_ENCRYPT_KEY;
+
+			DataEncryptor de = new DataEncryptor();
+			de.setIV(iv);
+
+			String decryptedSsn = "";
+			try {
+				decryptedSsn = de.decrypt(ssn, key);
+
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				// e.printStackTrace();
+				decryptedSsn = "err";
+			}
+			// End sensitive data decryption
+
 			user.setId(id);
 			user.setFirstName(firstName);
 			user.setLastName(lastName);
 			user.setEmail(email);
-			user.setSsn(ssn);
+			user.setSsn(decryptedSsn);
 			user.setPassword(password);
 			user.setSalt(salt);
 			user.setRoleId(roleId);
@@ -405,19 +471,29 @@ public class DatabaseConnector {
 		String query = "INSERT INTO USERS (FIRSTNAME, LASTNAME, EMAIL, SSN, PASSWORD, SALT, ROLEID, STATUSID, FIRMID) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 
 		try {
+
+			// Password hashing
+			PasswordHasher ph = new PasswordHasher();
+			String salt = ph.generateSalt();
+			String passwordHashed = ph.sha512(newUser.getPassword(), salt);
+			// end password hashing
+
 			st = this.con.prepareStatement(query,
 					Statement.RETURN_GENERATED_KEYS);
 			st.setString(1, newUser.getFirstName());
 			st.setString(2, newUser.getLastName());
 			st.setString(3, newUser.getEmail());
 			st.setString(4, newUser.getSsn());
-			st.setString(5, newUser.getPassword());
-			st.setString(6, newUser.getSalt());
+			st.setString(5, passwordHashed);
+			st.setString(6, salt);
 			st.setInt(7, newUser.getRoleId());
 			st.setInt(8, newUser.getStatusId());
 			st.setInt(9, newUser.getBrokerFirmId());
 
 			int affectedRows = st.executeUpdate();
+
+			StockTradingServer.Logger logger = new StockTradingServer.Logger();
+			logger.logDatabaseActivity(st.toString());
 
 			if (affectedRows == 0) {
 				v.setVerified(false);
@@ -451,20 +527,47 @@ public class DatabaseConnector {
 		String query = "UPDATE USERS SET FIRSTNAME = ?, LASTNAME = ?, EMAIL = ?, SSN = ?, PASSWORD = ?, SALT = ?, ROLEID = ?, STATUSID = ?, FIRMID = ? WHERE ID = ?";
 
 		try {
+
+			// Password hashing
+			PasswordHasher ph = new PasswordHasher();
+			String salt = ph.generateSalt();
+			String passwordHashed = ph.sha512(user.getPassword(), salt);
+			// end password hashing
+
+			// Sensitive data encryption
+			String iv = StockTradingCommon.Enumeration.Broker.BROKER_ENCRYPT_IV;
+			String key = StockTradingCommon.Enumeration.Broker.BROKER_ENCRYPT_KEY;
+			DataEncryptor de = new DataEncryptor();
+			de.setIV(iv);
+
+			byte[] ssnCipher = null;
+
+			try {
+				ssnCipher = de.encrypt(user.getSsn(), key);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			// end encryption
+
 			st = this.con.prepareStatement(query,
 					Statement.RETURN_GENERATED_KEYS);
 			st.setString(1, user.getFirstName());
 			st.setString(2, user.getLastName());
 			st.setString(3, user.getEmail());
-			st.setString(4, user.getSsn());
-			st.setString(5, user.getPassword());
-			st.setString(6, user.getSalt());
+			st.setBytes(4, ssnCipher);
+			st.setString(5, passwordHashed);
+			st.setString(6, salt);
 			st.setInt(7, user.getRoleId());
 			st.setInt(8, user.getStatusId());
 			st.setInt(9, user.getBrokerFirmId());
 			st.setInt(10, idToUpdate);
 
 			int affectedRows = st.executeUpdate();
+
+			// log to DB
+			StockTradingServer.Logger logger = new StockTradingServer.Logger();
+			logger.logDatabaseActivity(st.toString());
 
 			if (affectedRows == 0) {
 				v.setVerified(false);
@@ -483,151 +586,14 @@ public class DatabaseConnector {
 		return v;
 	}
 
-	public ArrayList<CustomerInfo> selectCustomerInfoAll() {
-		ArrayList<CustomerInfo> customerInfoAll = new ArrayList<CustomerInfo>();
-		Statement st = null;
-		ResultSet rs = null;
-		String query = "SELECT * FROM CUSTOMER_INFO;";
-
-		try {
-			st = this.con.createStatement();
-			ResultSet res = st.executeQuery(query);
-
-			while (res.next()) {
-
-				int id = res.getInt(1);
-				String firstName = res.getString(2);
-				String lastName = res.getString(3);
-				String email = res.getString(4);
-				String phone = res.getString(5);
-
-				CustomerInfo customer = new CustomerInfo();
-				customer.setId(id);
-				customer.setFirstName(firstName);
-				customer.setLastName(lastName);
-				customer.setEmail(email);
-				customer.setPhone(phone);
-
-				customerInfoAll.add(customer);
-
-			}
-		} catch (SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseConnector.class.getName());
-			lgr.log(Level.WARNING, ex.getMessage(), ex);
-		}
-
-		return customerInfoAll;
-	}
-
-	public CustomerInfo selectCustomerInfo(int idToSelect) {
-		CustomerInfo customer = new CustomerInfo();
-
-		Statement st = null;
-		ResultSet rs = null;
-		String query = "SELECT * FROM CUSTOMER_INFO WHERE id = \"" + idToSelect
-				+ "\";";
-
-		try {
-			st = this.con.createStatement();
-			ResultSet res = st.executeQuery(query);
-
-			res.next();
-
-			int id = res.getInt(1);
-			String firstName = res.getString(2);
-			String lastName = res.getString(3);
-			String email = res.getString(4);
-			String phone = res.getString(5);
-
-			customer.setId(id);
-			customer.setFirstName(firstName);
-			customer.setLastName(lastName);
-			customer.setEmail(email);
-			customer.setPhone(phone);
-
-		} catch (SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseConnector.class.getName());
-			lgr.log(Level.WARNING, ex.getMessage(), ex);
-		}
-
-		return customer;
-	}
-
-	public boolean insertNewCustomerInfo(CustomerInfo newCustomer) {
-		Statement st = null;
-		ResultSet rs = null;
-
-		String query = "INSERT INTO CUSTOMER_INFO (FIRSTNAME, LASTNAME, EMAIL, PHONE)"
-				+ " VALUES ("
-				+ "\""
-				+ newCustomer.getFirstName()
-				+ "\",\""
-				+ newCustomer.getLastName()
-				+ "\",\""
-				+ newCustomer.getEmail()
-				+ "\",\"" + newCustomer.getPhone() + "\")";
-
-		try {
-
-			st = this.con.createStatement();
-
-			int affectedRows = st.executeUpdate(query,
-					Statement.RETURN_GENERATED_KEYS);
-
-			if (affectedRows == 0) {
-				throw new SQLException("Insert failed");
-			}
-
-			rs = st.getGeneratedKeys();
-			if (rs.next()) {
-				System.out.println(rs.getLong(1));
-			} else {
-				throw new SQLException("No generated key obtained.");
-			}
-
-		} catch (SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseConnector.class.getName());
-			lgr.log(Level.WARNING, ex.getMessage(), ex);
-		}
-
-		return true;
-	}
-
-	public boolean updateCustomerInfo(int idToUpdate,
-			CustomerInfo customerToUpdate) {
-		Statement st = null;
-		ResultSet rs = null;
-
-		String query = "UPDATE CUSTOMER_INFO SET" + " FIRSTNAME = \""
-				+ customerToUpdate.getFirstName() + "\", LASTNAME = \""
-				+ customerToUpdate.getLastName() + "\", EMAIL = \""
-				+ customerToUpdate.getEmail() + "\", PHONE = \""
-				+ customerToUpdate.getPhone() + "\" WHERE ID = \"" + idToUpdate
-				+ "\";";
-
-		try {
-
-			st = this.con.createStatement();
-
-			int affectedRows = st.executeUpdate(query);
-
-			if (affectedRows == 0) {
-				throw new SQLException("Update failed");
-			}
-
-		} catch (SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseConnector.class.getName());
-			lgr.log(Level.WARNING, ex.getMessage(), ex);
-		}
-
-		return true;
-	}
-
+	/*
+	 * This function returns an arraylist of all the active stocks in the system
+	 */
 	public ArrayList<Stock> selectStockAll() {
 		ArrayList<Stock> stocksAll = new ArrayList<Stock>();
 		Statement st = null;
 		ResultSet rs = null;
-		String query = "SELECT * FROM STOCKS;";
+		String query = "SELECT * FROM STOCKS WHERE STATUSID = 1;";
 
 		try {
 			st = this.con.createStatement();
@@ -638,13 +604,15 @@ public class DatabaseConnector {
 				int id = res.getInt(1);
 				String name = res.getString(2);
 				int amount = res.getInt(3);
-				int price = res.getInt(4);
+				double price = res.getDouble(4);
+				int statusId = res.getInt(5);
 
 				Stock stock = new Stock();
 				stock.setId(id);
 				stock.setName(name);
 				stock.setAmount(amount);
 				stock.setPrice(price);
+				stock.setStatusId(statusId);
 
 				stocksAll.add(stock);
 
@@ -657,29 +625,36 @@ public class DatabaseConnector {
 		return stocksAll;
 	}
 
+	/*
+	 * This method returns a stock given a stock id
+	 */
 	public Stock selectStock(int idToSelect) {
 		Stock stock = new Stock();
 
-		Statement st = null;
+		PreparedStatement st = null;
 		ResultSet rs = null;
-		String query = "SELECT * FROM STOCKS WHERE id = \"" + idToSelect
-				+ "\";";
+		String query = "SELECT * FROM STOCKS WHERE id = ?";
 
 		try {
-			st = this.con.createStatement();
-			ResultSet res = st.executeQuery(query);
+			st = this.con.prepareStatement(query,
+					Statement.RETURN_GENERATED_KEYS);
+			st.setInt(1, idToSelect);
+
+			ResultSet res = st.executeQuery();
 
 			res.next();
 
 			int id = res.getInt(1);
 			String name = res.getString(2);
 			int amount = res.getInt(3);
-			int price = res.getInt(4);
+			double price = res.getDouble(4);
+			int statusId = res.getInt(5);
 
 			stock.setId(id);
 			stock.setName(name);
 			stock.setAmount(amount);
 			stock.setPrice(price);
+			stock.setStatusId(statusId);
 
 		} catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(DatabaseConnector.class.getName());
@@ -689,30 +664,39 @@ public class DatabaseConnector {
 		return stock;
 	}
 
-	public boolean insertNewStock(Stock newStock) {
-		Statement st = null;
+	/*
+	 * This function inserts a new stock into the database MySQL injection
+	 * checked
+	 */
+	public Validator insertNewStock(Stock newStock) {
+		Validator v = newStock.validate();
+		if (!v.isVerified()) {
+			return v;
+		}
+
+		PreparedStatement st = null;
 		ResultSet rs = null;
 
-		String query = "INSERT INTO STOCKS (NAME, AMOUNT, PRICE)" + " VALUES ("
-				+ "\"" + newStock.getName() + "\",\"" + newStock.getAmount()
-				+ "\",\"" + newStock.getPrice() + "\")";
+		String query = "INSERT INTO STOCKS (NAME, AMOUNT, PRICE, STATUSID) VALUES (?, ?, ?, ?)";
 
 		try {
 
-			st = this.con.createStatement();
-
-			int affectedRows = st.executeUpdate(query,
+			st = this.con.prepareStatement(query,
 					Statement.RETURN_GENERATED_KEYS);
+			st.setString(1, newStock.getName());
+			st.setInt(2, newStock.getAmount());
+			st.setDouble(3, newStock.getPrice());
+			st.setInt(4, newStock.getStatusId());
+
+			int affectedRows = st.executeUpdate();
+
+			StockTradingServer.Logger logger = new StockTradingServer.Logger();
+			logger.logDatabaseActivity(st.toString());
 
 			if (affectedRows == 0) {
-				throw new SQLException("Insert failed");
-			}
-
-			rs = st.getGeneratedKeys();
-			if (rs.next()) {
-				System.out.println(rs.getLong(1));
-			} else {
-				throw new SQLException("No generated key obtained.");
+				v.setVerified(false);
+				v.setStatus("Could not insert into the table");
+				return v;
 			}
 
 		} catch (SQLException ex) {
@@ -720,25 +704,43 @@ public class DatabaseConnector {
 			lgr.log(Level.WARNING, ex.getMessage(), ex);
 		}
 
-		return true;
+		v.setVerified(true);
+		v.setStatus("Success");
+
+		return v;
 	}
 
-	public boolean updateStock(int idToUpdate, Stock stock) {
-		Statement st = null;
-		ResultSet rs = null;
+	/*
+	 * This function updates a stock in the database MySQL injections checked
+	 */
+	public Validator updateStock(int idToUpdate, Stock stock) {
+		Validator v = stock.validate();
+		if (!v.isVerified()) {
+			return v;
+		}
 
-		String query = "UPDATE STOCKS SET" + " NAME = \"" + stock.getName()
-				+ "\", AMOUNT = \"" + stock.getAmount() + "\", PRICE = \""
-				+ stock.getPrice() + "\" WHERE ID = \"" + idToUpdate + "\";";
+		PreparedStatement st = null;
+
+		String query = "UPDATE STOCKS SET NAME = ?, AMOUNT = ?, PRICE = ?, STATUSID = ? WHERE ID = ?";
 
 		try {
+			st = this.con.prepareStatement(query,
+					Statement.RETURN_GENERATED_KEYS);
+			st.setString(1, stock.getName());
+			st.setInt(2, stock.getAmount());
+			st.setDouble(3, stock.getPrice());
+			st.setInt(4, stock.getStatusId());
+			st.setInt(5, idToUpdate);
 
-			st = this.con.createStatement();
+			int affectedRows = st.executeUpdate();
 
-			int affectedRows = st.executeUpdate(query);
+			StockTradingServer.Logger logger = new StockTradingServer.Logger();
+			logger.logDatabaseActivity(st.toString());
 
 			if (affectedRows == 0) {
-				throw new SQLException("Update failed");
+				v.setVerified(false);
+				v.setStatus("Could not update the table");
+				return v;
 			}
 
 		} catch (SQLException ex) {
@@ -746,14 +748,20 @@ public class DatabaseConnector {
 			lgr.log(Level.WARNING, ex.getMessage(), ex);
 		}
 
-		return true;
+		v.setVerified(true);
+		v.setStatus("Success");
+
+		return v;
 	}
 
+	/*
+	 * This functions returns an array list of all the orders
+	 */
 	public ArrayList<Order> selectOrdersAll() {
 		ArrayList<Order> ordersAll = new ArrayList<Order>();
 		Statement st = null;
 		ResultSet rs = null;
-		String query = "SELECT * FROM ORDERS;";
+		String query = "SELECT * FROM ORDERS WHERE STATUSID = 1";
 
 		try {
 			st = this.con.createStatement();
@@ -761,23 +769,27 @@ public class DatabaseConnector {
 
 			while (res.next()) {
 				int orderId = res.getInt(1);
-				int brokerId = res.getInt(2);
-				int stockId = res.getInt(3);
-				int amount = res.getInt(4);
-				Date dateIssued = res.getDate(5);
-				Date dateExpiration = res.getDate(6);
-				int statusId = res.getInt(7);
-				int typeId = res.getInt(8);
+				int typeId = res.getInt(2);
+				int brokerId = res.getInt(3);
+				int customerId = res.getInt(4);
+				int stockId = res.getInt(5);
+				int amount = res.getInt(6);
+				double price = res.getDouble(7);
+				Timestamp dateIssued = res.getTimestamp(8);
+				Timestamp dateExpiration = res.getTimestamp(9);
+				int statusId = res.getInt(10);
 
 				Order order = new Order();
 				order.setOrderId(orderId);
+				order.setTypeId(typeId);
 				order.setBrokerId(brokerId);
+				order.setCustomerId(customerId);
 				order.setStockId(stockId);
 				order.setAmount(amount);
+				order.setPrice(price);
 				order.setDateIssued(dateIssued);
 				order.setDateExpiration(dateExpiration);
 				order.setStatusId(statusId);
-				order.setTypeId(typeId);
 
 				ordersAll.add(order);
 			}
@@ -789,37 +801,44 @@ public class DatabaseConnector {
 		return ordersAll;
 	}
 
+	/*
+	 * This function returns a particular order
+	 */
 	public Order selectOrder(int idToSelect) {
 		Order order = new Order();
 
-		Statement st = null;
+		PreparedStatement st = null;
 		ResultSet rs = null;
-		String query = "SELECT * FROM ORDERS WHERE ORDERID = \"" + idToSelect
-				+ "\";";
+		String query = "SELECT * FROM ORDERS WHERE ORDERID = ?";
 
 		try {
-			st = this.con.createStatement();
-			ResultSet res = st.executeQuery(query);
+			st = this.con.prepareStatement(query);
+			st.setInt(1, idToSelect);
+			ResultSet res = st.executeQuery();
 
 			res.next();
 
 			int orderId = res.getInt(1);
-			int brokerId = res.getInt(2);
-			int stockId = res.getInt(3);
-			int amount = res.getInt(4);
-			Date dateIssued = res.getDate(5);
-			Date dateExpiration = res.getDate(6);
-			int statusId = res.getInt(7);
-			int typeId = res.getInt(8);
+			int typeId = res.getInt(2);
+			int brokerId = res.getInt(3);
+			int customerId = res.getInt(4);
+			int stockId = res.getInt(5);
+			int amount = res.getInt(6);
+			double price = res.getDouble(7);
+			Timestamp dateIssued = res.getTimestamp(8);
+			Timestamp dateExpiration = res.getTimestamp(9);
+			int statusId = res.getInt(10);
 
 			order.setOrderId(orderId);
+			order.setTypeId(typeId);
 			order.setBrokerId(brokerId);
+			order.setCustomerId(customerId);
 			order.setStockId(stockId);
 			order.setAmount(amount);
+			order.setPrice(price);
 			order.setDateIssued(dateIssued);
 			order.setDateExpiration(dateExpiration);
 			order.setStatusId(statusId);
-			order.setTypeId(typeId);
 
 		} catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(DatabaseConnector.class.getName());
@@ -829,74 +848,302 @@ public class DatabaseConnector {
 		return order;
 	}
 
-	public boolean insertNewOrder(Order newOrder) {
-		Statement st = null;
+	/*
+	 * This function inserts a new order to the database
+	 */
+	public Validator insertNewOrder(Order newOrder) {
+		Validator v = newOrder.validate();
+		if (!v.isVerified()) {
+			return v;
+		}
+
+		PreparedStatement st = null;
 		ResultSet rs = null;
 
-		String query = "INSERT INTO ORDERS (BROKERID, STOCKID, AMOUNT, DATEISSUED, DATEEXPIRATION, STATUSID, TYPEID)"
-				+ " VALUES ("
-				+ "\""
-				+ newOrder.getBrokerId()
-				+ "\",\""
-				+ newOrder.getStockId()
-				+ "\",\""
-				+ newOrder.getAmount()
-				+ "\",\""
-				+ newOrder.getDateIssued()
-				+ "\",\""
-				+ newOrder.getDateExpiration()
-				+ "\",\""
-				+ newOrder.getStatusId()
-				+ "\",\""
-				+ newOrder.getTypeId()
-				+ "\")";
+		String query = "INSERT INTO ORDERS (TYPEID, BROKERID, CUSTOMERID, STOCKID, AMOUNT, PRICE, DATEISSUED, DATEEXPIRATION, STATUSID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		try {
-
-			st = this.con.createStatement();
-
-			int affectedRows = st.executeUpdate(query,
+			st = this.con.prepareStatement(query,
 					Statement.RETURN_GENERATED_KEYS);
+			st.setInt(1, newOrder.getTypeId());
+			st.setInt(2, newOrder.getBrokerId());
+			st.setInt(3, newOrder.getCustomerId());
+			st.setInt(4, newOrder.getStockId());
+			st.setInt(5, newOrder.getAmount());
+			st.setDouble(6, newOrder.getPrice());
+			st.setTimestamp(7, newOrder.getDateIssued());
+			st.setTimestamp(8, newOrder.getDateExpiration());
+			st.setInt(9, newOrder.getStatusId());
+
+			System.out.println(st.toString());
+
+			int affectedRows = st.executeUpdate();
+
+			StockTradingServer.Logger logger = new StockTradingServer.Logger();
+			logger.logDatabaseActivity(st.toString());
 
 			if (affectedRows == 0) {
-				throw new SQLException("Insert failed");
+				v.setVerified(false);
+				v.setStatus("Could not insert into the table");
+				return v;
+			}
+
+		} catch (SQLException ex) {
+			Logger lgr = Logger.getLogger(DatabaseConnector.class.getName());
+			lgr.log(Level.WARNING, ex.getMessage(), ex);
+		}
+
+		v.setVerified(true);
+		v.setStatus("Success");
+
+		return v;
+	}
+
+	/*
+	 * This function updates an order
+	 */
+	public Validator updateOrder(int idToUpdate, Order order) {
+		Validator v = order.validate();
+		if (!v.isVerified()) {
+			return v;
+		}
+
+		PreparedStatement st = null;
+		ResultSet rs = null;
+
+		String query = "UPDATE ORDERS SET TYPEID = ?, BROKERID = ?, CUSTOMERID = ?, STOCKID = ?, AMOUNT = ?, PRICE = ?, DATEISSUED = ?, DATEEXPIRATION = ?, STATUSID = ? WHERE ORDERID = ?";
+
+		try {
+			st = this.con.prepareStatement(query,
+					Statement.RETURN_GENERATED_KEYS);
+			st.setInt(1, order.getTypeId());
+			st.setInt(2, order.getBrokerId());
+			st.setInt(3, order.getCustomerId());
+			st.setInt(4, order.getStockId());
+			st.setInt(5, order.getAmount());
+			st.setDouble(6, order.getPrice());
+			st.setTimestamp(7, order.getDateIssued());
+			st.setTimestamp(8, order.getDateExpiration());
+			st.setInt(9, order.getStatusId());
+			st.setInt(10, idToUpdate);
+
+			int affectedRows = st.executeUpdate();
+
+			StockTradingServer.Logger logger = new StockTradingServer.Logger();
+			logger.logDatabaseActivity(st.toString());
+
+			if (affectedRows == 0) {
+				v.setVerified(false);
+				v.setStatus("Could not update the table");
+				return v;
+			}
+
+		} catch (SQLException ex) {
+			Logger lgr = Logger.getLogger(DatabaseConnector.class.getName());
+			lgr.log(Level.WARNING, ex.getMessage(), ex);
+		}
+
+		v.setVerified(true);
+		v.setStatus("Success");
+
+		return v;
+	}
+
+	/*
+	 * This function returns an array list of all active customers
+	 */
+	public ArrayList<CustomerInfo> selectCustomerInfoAll() {
+		ArrayList<CustomerInfo> customerInfoAll = new ArrayList<CustomerInfo>();
+		Statement st = null;
+		ResultSet rs = null;
+		String query = "SELECT * FROM CUSTOMER_INFO WHERE STATUSID = 1;";
+
+		try {
+			st = this.con.createStatement();
+			ResultSet res = st.executeQuery(query);
+
+			while (res.next()) {
+
+				int id = res.getInt(1);
+				String firstName = res.getString(2);
+				String lastName = res.getString(3);
+				String email = res.getString(4);
+				String phone = res.getString(5);
+				int statusId = res.getInt(6);
+
+				CustomerInfo customer = new CustomerInfo();
+				customer.setId(id);
+				customer.setFirstName(firstName);
+				customer.setLastName(lastName);
+				customer.setEmail(email);
+				customer.setPhone(phone);
+				customer.setStatusId(statusId);
+
+				customerInfoAll.add(customer);
+
+			}
+		} catch (SQLException ex) {
+			Logger lgr = Logger.getLogger(DatabaseConnector.class.getName());
+			lgr.log(Level.WARNING, ex.getMessage(), ex);
+		}
+
+		return customerInfoAll;
+	}
+
+	// /*
+	// * This function returns an array list of all active customers
+	// */
+	// public ArrayList<CustomerInfo> selectCustomerInfoByFirm(int firmId) {
+	// ArrayList<CustomerInfo> customerInfoAll = new ArrayList<CustomerInfo>();
+	// Statement st = null;
+	// ResultSet rs = null;
+	// String query = "";
+	//
+	// try {
+	// st = this.con.createStatement();
+	// ResultSet res = st.executeQuery(query);
+	//
+	// while (res.next()) {
+	//
+	// int id = res.getInt(1);
+	// String firstName = res.getString(2);
+	// String lastName = res.getString(3);
+	// String email = res.getString(4);
+	// String phone = res.getString(5);
+	// int statusId = res.getInt(6);
+	//
+	// CustomerInfo customer = new CustomerInfo();
+	// customer.setId(id);
+	// customer.setFirstName(firstName);
+	// customer.setLastName(lastName);
+	// customer.setEmail(email);
+	// customer.setPhone(phone);
+	// customer.setStatusId(statusId);
+	//
+	// customerInfoAll.add(customer);
+	//
+	// }
+	// } catch (SQLException ex) {
+	// Logger lgr = Logger.getLogger(DatabaseConnector.class.getName());
+	// lgr.log(Level.WARNING, ex.getMessage(), ex);
+	// }
+	//
+	// return customerInfoAll;
+	// }
+
+	public CustomerInfo selectCustomerInfo(int idToSelect) {
+		CustomerInfo customer = new CustomerInfo();
+
+		PreparedStatement st = null;
+		String query = "SELECT * FROM CUSTOMER_INFO WHERE id = ?";
+
+		try {
+			st = this.con.prepareStatement(query);
+			st.setInt(1, idToSelect);
+
+			ResultSet res = st.executeQuery();
+
+			res.next();
+
+			int id = res.getInt(1);
+			String firstName = res.getString(2);
+			String lastName = res.getString(3);
+			String email = res.getString(4);
+			String phone = res.getString(5);
+			int statusId = res.getInt(6);
+
+			customer.setId(id);
+			customer.setFirstName(firstName);
+			customer.setLastName(lastName);
+			customer.setEmail(email);
+			customer.setPhone(phone);
+			customer.setStatusId(statusId);
+		} catch (SQLException ex) {
+			Logger lgr = Logger.getLogger(DatabaseConnector.class.getName());
+			lgr.log(Level.WARNING, ex.getMessage(), ex);
+		}
+
+		return customer;
+	}
+
+	public Validator insertNewCustomerInfo(CustomerInfo newCustomer) {
+		Validator v = newCustomer.validate();
+		if (!v.isVerified()) {
+			return v;
+		}
+
+		PreparedStatement st = null;
+		ResultSet rs = null;
+
+		String query = "INSERT INTO CUSTOMER_INFO (FIRSTNAME, LASTNAME, EMAIL, PHONE, STATUSID) VALUES (?, ?, ?, ?, ?)";
+
+		try {
+			st = this.con.prepareStatement(query,
+					Statement.RETURN_GENERATED_KEYS);
+			st.setString(1, newCustomer.getFirstName());
+			st.setString(2, newCustomer.getLastName());
+			st.setString(3, newCustomer.getEmail());
+			st.setString(4, newCustomer.getPhone());
+			st.setInt(5, newCustomer.getStatusId());
+
+			int affectedRows = st.executeUpdate();
+
+			StockTradingServer.Logger logger = new StockTradingServer.Logger();
+			logger.logDatabaseActivity(st.toString());
+
+			if (affectedRows == 0) {
+				v.setVerified(false);
+				v.setStatus("Could not insert into the table");
+				return v;
 			}
 
 			rs = st.getGeneratedKeys();
-			if (rs.next()) {
-				System.out.println(rs.getLong(1));
-			} else {
-				throw new SQLException("No generated key obtained.");
-			}
+			rs.next();
+			rs.getLong(1);
+			// System.out.println(rs.getLong(1));
 
 		} catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(DatabaseConnector.class.getName());
 			lgr.log(Level.WARNING, ex.getMessage(), ex);
 		}
 
-		return true;
+		v.setVerified(true);
+		v.setStatus("Success");
+
+		return v;
 	}
 
-	public boolean updateOrder(int idToUpdate, Order order) {
-		Statement st = null;
+	public Validator updateCustomerInfo(int idToUpdate,
+			CustomerInfo customerToUpdate) {
+		Validator v = customerToUpdate.validate();
+		if (!v.isVerified()) {
+			return v;
+		}
+
+		PreparedStatement st = null;
 		ResultSet rs = null;
 
-		String query = "UPDATE ORDERS SET" + " BROKERID = \""
-				+ order.getBrokerId() + "\", STOCKID = \"" + order.getStockId()
-				+ "\", AMOUNT = \"" + order.getAmount() + "\", DATEISSUED = \""
-				+ order.getDateIssued() + "\", DATEEXPIRATION = \""
-				+ order.getDateExpiration() + "\", STATUSID = \""
-				+ order.getStatusId() + "\", TYPEID = \"" + order.getTypeId()
-				+ "\" WHERE ORDERID = \"" + idToUpdate + "\";";
+		String query = "UPDATE CUSTOMER_INFO SET FIRSTNAME = ?, LASTNAME = ?, EMAIL = ?, PHONE = ?, STATUSID = ? WHERE ID = ?";
 
 		try {
+			st = this.con.prepareStatement(query,
+					Statement.RETURN_GENERATED_KEYS);
+			st.setString(1, customerToUpdate.getFirstName());
+			st.setString(2, customerToUpdate.getLastName());
+			st.setString(3, customerToUpdate.getEmail());
+			st.setString(4, customerToUpdate.getPhone());
+			st.setInt(5, customerToUpdate.getStatusId());
+			st.setInt(6, idToUpdate);
 
-			st = this.con.createStatement();
+			int affectedRows = st.executeUpdate();
 
-			int affectedRows = st.executeUpdate(query);
+			StockTradingServer.Logger logger = new StockTradingServer.Logger();
+			logger.logDatabaseActivity(st.toString());
 
 			if (affectedRows == 0) {
-				throw new SQLException("Update failed");
+				v.setVerified(false);
+				v.setStatus("Could not insert into the table");
+				return v;
 			}
 
 		} catch (SQLException ex) {
@@ -904,7 +1151,10 @@ public class DatabaseConnector {
 			lgr.log(Level.WARNING, ex.getMessage(), ex);
 		}
 
-		return true;
+		v.setVerified(true);
+		v.setStatus("Success");
+
+		return v;
 	}
 
 	public ArrayList<StatusesOptions> selectAllStatuses() {
