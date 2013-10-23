@@ -32,9 +32,9 @@ public class MainController implements Initializable {
         Stage stage = new Stage();
         Parent root = FXMLLoader.load(
             MainController.class.getResource("BrokerFirm.fxml"));
-        
+
         stage.setScene(new Scene(root));
-        stage.setTitle("Add new Brokerage Firm");
+        stage.setTitle("Brokerage Firms");
         stage.initModality(Modality.NONE);
         stage.initOwner(  ((Node)event.getSource()).getScene().getWindow() );
         stage.show();
@@ -50,7 +50,7 @@ public class MainController implements Initializable {
             //MainController.class.getResource("../StockTradingClient.MessageBox/Info.fxml"));
         
         stage.setScene(new Scene(root));
-        stage.setTitle("Add new Broker");
+        stage.setTitle("Brokers");
         stage.initModality(Modality.NONE);
         //stage.initStyle(StageStyle.UNDECORATED);
         stage.initOwner(  ((Node)event.getSource()).getScene().getWindow() );
@@ -65,7 +65,7 @@ public class MainController implements Initializable {
             MainController.class.getResource("Stock.fxml"));
  
         stage.setScene(new Scene(root));
-        stage.setTitle("Add new Stock");
+        stage.setTitle("Stocks");
         stage.initModality(Modality.NONE);
         stage.initOwner(  ((Node)event.getSource()).getScene().getWindow() );
         stage.show();
@@ -79,7 +79,7 @@ public class MainController implements Initializable {
             MainController.class.getResource("Customer.fxml"));
  
         stage.setScene(new Scene(root));
-        stage.setTitle("Add new Customer");
+        stage.setTitle("Customers");
         stage.initModality(Modality.NONE);
         stage.initOwner(  ((Node)event.getSource()).getScene().getWindow() );
         stage.show();
@@ -93,7 +93,7 @@ public class MainController implements Initializable {
             MainController.class.getResource("SellOrder.fxml"));
  
         stage.setScene(new Scene(root));
-        stage.setTitle("Add new Selling Order");
+        stage.setTitle("Selling Orders");
         stage.initModality(Modality.NONE);
         stage.initOwner(  ((Node)event.getSource()).getScene().getWindow() );
         stage.show();
@@ -107,7 +107,7 @@ public class MainController implements Initializable {
             MainController.class.getResource("BuyOrder.fxml"));
  
         stage.setScene(new Scene(root));
-        stage.setTitle("Add new Buying Order");
+        stage.setTitle("Buying Orders");
         stage.initModality(Modality.NONE);
         stage.initOwner(  ((Node)event.getSource()).getScene().getWindow() );
         stage.show();

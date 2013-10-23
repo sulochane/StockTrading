@@ -4,16 +4,12 @@
  */
 package StockTradingClient;
 
-import StockTradingCommon.Enumeration;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.collections.ObservableList;
 
 import StockTradingServer.*;
 import StockTradingCommon.Enumeration;
@@ -27,62 +23,83 @@ import StockTradingCommon.Enumeration;
 public class BrokerFirmController implements Initializable {
 
     
-    @FXML
-    private TextField BrokerageFirmName;
+    @FXML private TextField BrokerageFirmName;    
+    @FXML private TextField BrokerageFirmLicenseNumber;    
+    @FXML private TextField AddressStreet;        
+    @FXML private TextField AddressState;        
+    @FXML private TextField AddressCity;            
+    @FXML private TextField AddressZip;  
     
-    @FXML
-    private TextField BrokerageFirmLicenseNumber;
+    @FXML private ChoiceBox<KeyValuePair> StatusChoiceBox = new ChoiceBox<KeyValuePair>();
     
-    @FXML
-    private TextField AddressStreet;
-    
-    
-    @FXML
-    private TextField AddressState;
-        
-    @FXML
-    private TextField AddressCity;
-            
-    @FXML
-    private TextField AddressZip;
-                
-    @FXML 
-    private ChoiceBox<KeyValuePair> StatusChoiceBox = new ChoiceBox<KeyValuePair>();
-    
+    @FXML private ListView<KeyValuePair> BrokerageFirmListView = new ListView<KeyValuePair>();
     @FXML private Label Message;
     
+    @FXML private Button btnAdd;
+    @FXML private Button btnSave;
+    @FXML private Button btnClear;
+    
     @FXML 
-    private void handleAddButtonAction(ActionEvent event) {
-        System.out.println("You clicked Add!");
-        System.out.println("Broker Name    :" + BrokerageFirmName.getText());
-        System.out.println("License Number :" + BrokerageFirmLicenseNumber.getText());
-        System.out.println("Address Street :" + BrokerageFirmLicenseNumber.getText());
-        System.out.println("Address City :" + AddressCity.getText());
-        System.out.println("Address State :" + AddressState.getText());
-        System.out.println("Address Zip         :" + AddressZip.getText());        
+    private void handleAddButtonAction(ActionEvent event) {    
 
         StockTradingServer.BrokerageFirm brokerageFirm = new StockTradingServer.BrokerageFirm();
         brokerageFirm.setName(BrokerageFirmName.getText());
+        brokerageFirm.setLicenceNumber(BrokerageFirmLicenseNumber.getText());
         brokerageFirm.setAddressStreet(AddressState.getText());
         brokerageFirm.setAddressCity(AddressCity.getText());
         brokerageFirm.setAddressState(AddressState.getText());
         brokerageFirm.setAddressZip(AddressZip.getText());
-        brokerageFirm.setStatus(StatusChoiceBox.getValue().getKey());
         
-        StockTradingServer.DatabaseConnector dbConnector = new StockTradingServer.DatabaseConnector();
-        dbConnector.connectToDatabase();
-        boolean status = dbConnector.insertNewBrokerageFirm(brokerageFirm);
-        if (status)
+        if(StatusChoiceBox.getValue().getKey() != null)
         {
+            brokerageFirm.setStatus( Integer.parseInt(StatusChoiceBox.getValue().getKey()));
+        }
+
+        Message.setText(Enumeration.Database.DB_REQUEST_INITIATED);
+        Validator validator =  Utility.AddBrokerageFirm(brokerageFirm);
+        
+        if (validator.isVerified())
+        {
+            PopulateBrokerageFirms();
             Message.setText(Enumeration.Database.DB_INSERT_SUCCESS);
         }
         else
         {
-            Message.setText(Enumeration.Database.DB_INSERT_SUCCESS);
-        }
-        
+            Message.setText(validator.getStatus());
+        }     
     }
         
+    @FXML
+    private void handleSaveButtonAction(ActionEvent event) 
+    {        
+        StockTradingServer.BrokerageFirm brokerageFirm = new StockTradingServer.BrokerageFirm();
+        KeyValuePair keyValueBrokerageFirmSelected =    BrokerageFirmListView.getSelectionModel().getSelectedItem();
+        brokerageFirm.setId(Integer.parseInt(keyValueBrokerageFirmSelected.getKey()));
+        brokerageFirm.setName(BrokerageFirmName.getText());
+        brokerageFirm.setLicenceNumber(BrokerageFirmLicenseNumber.getText());
+        brokerageFirm.setAddressStreet(AddressStreet.getText());
+        brokerageFirm.setAddressCity(AddressCity.getText());
+        brokerageFirm.setAddressState(AddressState.getText());
+        brokerageFirm.setAddressZip(AddressZip.getText());
+        if(StatusChoiceBox.getValue().getKey() != null)
+        {
+            brokerageFirm.setStatus( Integer.parseInt(StatusChoiceBox.getValue().getKey()));
+        }     
+        
+        Message.setText(Enumeration.Database.DB_REQUEST_INITIATED);
+        Validator validator = Utility.UpdateBrokerageFirm(brokerageFirm);
+        
+        if (validator.isVerified())
+        {
+            PopulateBrokerageFirms();
+            Message.setText(Enumeration.Database.DB_UPDATE_SUCCESS);
+        }
+        else
+        {
+            Message.setText(validator.getStatus());
+        }
+    }
+    
     @FXML
     private void handleClearButtonAction(ActionEvent event) {
         
@@ -93,20 +110,65 @@ public class BrokerFirmController implements Initializable {
         AddressCity.clear();
         AddressZip.clear();
                         
-        Message.setText(null);
+        Message.setText(null);       
         
-        StatusChoiceBox.valueProperty().unbind();
+        SetScreenModeAddNew();
     }
-        
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
+    public void initialize(URL url, ResourceBundle rb) 
+    {
         PopulateStatus();
-    }    
+        PopulateBrokerageFirms();
+        SetScreenModeAddNew();
+    }
     
-   
     private void PopulateStatus()
     {
         Utility utility = new Utility();
         utility.PopulateStatus(StatusChoiceBox);        
     }   
+    
+    private void PopulateBrokerageFirms()
+    {
+        Utility.PopulateBrokerageFirms(BrokerageFirmListView);          
+    }
+    
+    @FXML
+    private void ShowDetails()
+    {
+        KeyValuePair brokerageFirmKeyValue = BrokerageFirmListView.getSelectionModel().getSelectedItem();
+        
+        StockTradingServer.DatabaseConnector dbConnector = new StockTradingServer.DatabaseConnector();
+        
+       
+        BrokerageFirm brokerageFirm = dbConnector.selectBrokerageFirm(Integer.parseInt( brokerageFirmKeyValue.getKey()));
+        
+        //brokerageFirm.setBrokerageFirm(Integer.parseInt( brokerageFirm.getKey()));
+        
+        BrokerageFirmName.setText(brokerageFirm.getName());    
+        BrokerageFirmLicenseNumber.setText(brokerageFirm.getLicenceNumber());   
+        AddressStreet.setText(brokerageFirm.getAddressStreet());        
+        AddressState.setText(brokerageFirm.getAddressState());        
+        AddressCity.setText(brokerageFirm.getAddressCity()); 
+        AddressZip.setText(brokerageFirm.getAddressZip()); 
+        
+        StatusChoiceBox.getSelectionModel().select(brokerageFirm.getStatus());
+        
+        SetScreenModeEdit();
+    }
+    
+    private void SetScreenModeAddNew()
+    {
+        btnAdd.disableProperty().set(false);    // Add Enabled
+        btnSave.disableProperty().set(true);    // Save Disabled
+        
+        StatusChoiceBox.getSelectionModel().selectFirst();
+        BrokerageFirmListView.getSelectionModel().select(null);
+    }
+    
+    private void SetScreenModeEdit()
+    {
+        btnAdd.disableProperty().set(true);    // Add Disabled
+        btnSave.disableProperty().set(false);    // Save Enabled
+    }
 }

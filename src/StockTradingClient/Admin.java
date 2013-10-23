@@ -45,6 +45,9 @@ public class Admin extends Application {
 //        primaryStage.setScene(scene);
 //        primaryStage.show();
         
+        // TODO Capture the proper user ids
+        Utility.setBrokerID(1);
+        Utility.setBrokerageFirmID(11);
 
         stage = primaryStage;
         

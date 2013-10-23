@@ -8,80 +8,102 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="527.0000779296824" prefWidth="625.9998337890574" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="StockTradingClient.BrokerController">
+<AnchorPane id="AnchorPane" prefHeight="518.0" prefWidth="941.99995585937" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="StockTradingClient.BrokerController">
   <children>
-    <GridPane id="GridPane" alignment="TOP_LEFT" prefWidth="596.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="14.0">
-      <children>
-        <TextField fx:id="BrokerName" prefWidth="375.0" promptText="Name of the Broker" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-        <TextField fx:id="BrokerSSN" alignment="CENTER_LEFT" prefWidth="375.0" promptText="SSN Number of the Broker" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-        <TextField fx:id="AddressStreet" prefWidth="202.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-        <TextField fx:id="AddressCity" maxWidth="-Infinity" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-        <TextField fx:id="AddressState" alignment="TOP_LEFT" maxWidth="-Infinity" minWidth="30.0" prefWidth="30.0" GridPane.columnIndex="1" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="7" />
-        <TextField fx:id="AddressZip" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="75.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-        <Label text="Social Security Number (SSN) :" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-        <Label text="Broker Name :" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-        <Label text="Address :" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-        <Label text="City :" GridPane.columnIndex="0" GridPane.rowIndex="6" />
-        <Label text="State :" GridPane.columnIndex="0" GridPane.rowIndex="7" />
-        <Label text="ZIP :" GridPane.columnIndex="0" GridPane.rowIndex="8" />
-        <Label text="Contact Details:" GridPane.columnIndex="0" GridPane.rowIndex="4">
-          <font>
-            <Font name="System Bold" size="12.0" />
-          </font>
-        </Label>
-        <Label text="Email :" GridPane.columnIndex="0" GridPane.rowIndex="9" />
-        <Label text="Phone (Office) :" GridPane.columnIndex="0" GridPane.rowIndex="10" />
-        <Label text="Phone (Mobile) :" GridPane.columnIndex="0" GridPane.rowIndex="11" />
-        <HBox id="HBox" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" prefWidth="-1.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="15">
+    <SplitPane dividerPositions="0.34255320757501534" focusTraversable="true" prefHeight="471.0" prefWidth="824.99995585937" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="47.0">
+      <items>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="-1.0" prefWidth="-1.0">
           <children>
-            <Button alignment="CENTER" defaultButton="true" minWidth="-Infinity" mnemonicParsing="false" prefWidth="80.0" rotate="0.0" text="Add" />
-            <Button cancelButton="true" contentDisplay="LEFT" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleClearButtonAction" prefWidth="80.0" text="Clear" />
+            <VBox prefHeight="413.999755859375" prefWidth="-1.0" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <children>
+                <Label text="Brokerage Firm :" />
+                <ComboBox fx:id="brokerageFirmComboBox" disable="false" maxWidth="1.7976931348623157E308" onAction="#handleShowBrokers">
+                  <items>
+                    <FXCollections fx:factory="observableArrayList" />
+                  </items>
+                </ComboBox>
+                <Label prefHeight="30.0" prefWidth="245.99990000000253" text="Brokers in the system:" />
+                <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                  <content>
+                    <AnchorPane id="Content" maxHeight="-1.0" maxWidth="-1.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="-1.0">
+                      <children>
+                        <ListView id="BrokerageFirmListView" fx:id="BrokersListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#ShowDetails" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                      </children>
+                    </AnchorPane>
+                  </content>
+                </ScrollPane>
+              </children>
+            </VBox>
           </children>
-        </HBox>
-        <ChoiceBox fx:id="StatusChoiceBox" mouseTransparent="false" pickOnBounds="false" prefWidth="146.49990844726562" GridPane.columnIndex="1" GridPane.rowIndex="13">
-          <items>
-            <FXCollections fx:factory="observableArrayList" />
-          </items>
-        </ChoiceBox>
-        <Label text="Status :" GridPane.columnIndex="0" GridPane.rowIndex="13" />
-        <TextField prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-        <TextField maxWidth="-Infinity" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-        <TextField maxWidth="-Infinity" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-        <Label text="Brokerage Firm" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-        <ComboBox fx:id="brokerageFirmComboBox" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="0">
-          <items>
-            <FXCollections fx:factory="observableArrayList" />
-          </items>
-        </ComboBox>
-      </children>
-      <columnConstraints>
-        <ColumnConstraints fillWidth="true" hgrow="SOMETIMES" minWidth="170.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-      </columnConstraints>
-      <rowConstraints>
-        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
-      </rowConstraints>
-    </GridPane>
-    <Label layoutX="11.0" prefHeight="-1.0" prefWidth="-1.0" text="Broker Details" textAlignment="CENTER" textFill="#292929" AnchorPane.topAnchor="7.0">
+        </AnchorPane>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="469.0" prefWidth="537.0">
+          <children>
+            <GridPane id="GridPane" alignment="TOP_LEFT" prefWidth="592.0" AnchorPane.bottomAnchor="106.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="35.0">
+              <children>
+                <TextField fx:id="BrokerSSN" alignment="CENTER_LEFT" prefWidth="375.0" promptText="SSN Number of the Broker" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <Label text="Social Security Number (SSN) :" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <Label text="Broker Name :" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <Label text="Broker Account:" GridPane.columnIndex="0" GridPane.rowIndex="4">
+                  <font>
+                    <Font name="System Bold" size="12.0" />
+                  </font>
+                </Label>
+                <Label text="Email :" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                <HBox id="HBox" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" prefWidth="-1.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                  <children>
+                    <Button fx:id="btnSave" alignment="CENTER" defaultButton="true" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleSaveButtonAction" prefWidth="80.0" rotate="0.0" text="Save" />
+                    <Button fx:id="btnAdd" alignment="CENTER" defaultButton="true" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleAddButtonAction" prefWidth="80.0" rotate="0.0" text="Add" />
+                    <Button fx:id="btnClear" cancelButton="true" contentDisplay="LEFT" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleClearButtonAction" prefWidth="80.0" text="Clear" />
+                  </children>
+                </HBox>
+                <ChoiceBox fx:id="StatusChoiceBox" mouseTransparent="false" pickOnBounds="false" prefWidth="146.49990844726562" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                  <items>
+                    <FXCollections fx:factory="observableArrayList" />
+                  </items>
+                </ChoiceBox>
+                <Label text="Status :" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+                <TextField fx:id="Email" prefWidth="200.0" promptText="Email address of the broker. This will be the user name of the Broker." GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                <Label fx:id="Password" text="Password :" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                  <children>
+                    <PasswordField fx:id="Password1" maxWidth="-Infinity" prefWidth="150.0" promptText="Password" />
+                    <PasswordField fx:id="Password2" maxWidth="-Infinity" prefWidth="150.0" promptText="Confirm Password" />
+                  </children>
+                </HBox>
+                <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <children>
+                    <TextField fx:id="BrokerFirstName" prefWidth="162.0" promptText="First Name" />
+                    <TextField fx:id="BrokerLastName" prefWidth="247.0" promptText="Last Name" />
+                  </children>
+                </HBox>
+              </children>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="199.0" minWidth="169.0" prefWidth="178.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="444.0" minWidth="10.0" prefWidth="435.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+            </GridPane>
+          </children>
+        </AnchorPane>
+      </items>
+    </SplitPane>
+    <Label alignment="CENTER_LEFT" contentDisplay="LEFT" text="Brokers Details" textAlignment="CENTER" textFill="#292929" textOverrun="ELLIPSIS" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="6.0">
       <font>
         <Font name="Candara Bold" size="16.0" />
       </font>
     </Label>
-    <Label fx:id="Message" alignment="CENTER" prefHeight="33.0" prefWidth="601.0" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="14.0" />
+    <Label fx:id="Message" alignment="CENTER" prefHeight="33.0" prefWidth="607.9998558593725" text="" textAlignment="CENTER" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="326.0" AnchorPane.rightAnchor="8.0" />
   </children>
 </AnchorPane>
