@@ -478,17 +478,34 @@ public class DatabaseConnector {
 			String passwordHashed = ph.sha512(newUser.getPassword(), salt);
 			// end password hashing
 
+			// Sensitive data encryption
+			String iv = StockTradingCommon.Enumeration.Broker.BROKER_ENCRYPT_IV;
+			String key = StockTradingCommon.Enumeration.Broker.BROKER_ENCRYPT_KEY;
+			DataEncryptor de = new DataEncryptor();
+			de.setIV(iv);
+
+			byte[] ssnCipher = null;
+
+			try {
+				ssnCipher = de.encrypt(newUser.getSsn(), key);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			// end encryption
+
 			st = this.con.prepareStatement(query,
 					Statement.RETURN_GENERATED_KEYS);
 			st.setString(1, newUser.getFirstName());
 			st.setString(2, newUser.getLastName());
 			st.setString(3, newUser.getEmail());
-			st.setString(4, newUser.getSsn());
+			st.setBytes(4, ssnCipher);
 			st.setString(5, passwordHashed);
 			st.setString(6, salt);
 			st.setInt(7, newUser.getRoleId());
 			st.setInt(8, newUser.getStatusId());
 			st.setInt(9, newUser.getBrokerFirmId());
+
 
 			int affectedRows = st.executeUpdate();
 
