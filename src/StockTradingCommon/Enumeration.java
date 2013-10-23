@@ -39,9 +39,8 @@ public class Enumeration {
 	}
 
 	public static class Broker {
-            public final static int BROKER_SELECT_PARAM_EMPTY = 0;
-            public final static String BROKER_ENCRYPT_IV = "ABAFACAFAA5ABBAA";
-            public final static String BROKER_ENCRYPT_KEY = "0123456789abcdef";
+		public final static int BROKER_SELECT_PARAM_EMPTY = 0;
 
-        }
+	}
+
 }
