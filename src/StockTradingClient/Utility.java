@@ -72,8 +72,7 @@ public class  Utility
         {
             return isValid;
         } 
-    }
-    
+    }    
     public static String FormatNumber(String number)
     {
         DecimalFormat df = new DecimalFormat("#,##0.00");
@@ -179,6 +178,10 @@ public class  Utility
     }
     
     // Brokerage Firm
+    public static BrokerageFirm GetBrokerageFirmInfo(int brokerageFirmId)
+    {
+        return dbConnector.selectBrokerageFirm(brokerageFirmId);
+    }
     public static Validator AddBrokerageFirm(BrokerageFirm brokerageFirm)
     {
         return dbConnector.insertNewBrokerageFirm(brokerageFirm);
