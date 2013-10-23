@@ -19,19 +19,18 @@ public class Logger {
 	}
 
 	public void logDatabaseActivity(String query) {
-		String delimiter = " ";
+		String delimiter = " | ";
 		String endOfEntry = "\n\n\n";
 
 		try {
 			java.util.Date date = new java.util.Date();
 			String timestamp = new Timestamp(date.getTime()).toString();
 
-			String data = timestamp + delimiter + this.getUsername() + delimiter + query
-					+ endOfEntry;
+			String data = timestamp + delimiter + this.getUsername() + delimiter + query;
 			
 			PasswordHasher h = new PasswordHasher();
 			
-			data = data + delimiter + h.sha512(data, "");
+			data = data + delimiter + h.sha512(data, "acas") + endOfEntry;
 
 			File file = new File("logDbActivity.txt");
 
