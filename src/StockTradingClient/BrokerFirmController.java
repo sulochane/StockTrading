@@ -141,14 +141,9 @@ public class BrokerFirmController implements Initializable {
         {
             return;
         }
-        KeyValuePair brokerageFirmKeyValue = BrokerageFirmListView.getSelectionModel().getSelectedItem();
+        KeyValuePair brokerageFirmKeyValue = BrokerageFirmListView.getSelectionModel().getSelectedItem();                
         
-        StockTradingServer.DatabaseConnector dbConnector = new StockTradingServer.DatabaseConnector();
-        
-       
-        BrokerageFirm brokerageFirm = dbConnector.selectBrokerageFirm(Integer.parseInt( brokerageFirmKeyValue.getKey()));
-        
-        //brokerageFirm.setBrokerageFirm(Integer.parseInt( brokerageFirm.getKey()));
+        BrokerageFirm brokerageFirm = Utility.GetBrokerageFirmInfo(Integer.parseInt( brokerageFirmKeyValue.getKey()));        
         
         BrokerageFirmName.setText(brokerageFirm.getName());    
         BrokerageFirmLicenseNumber.setText(brokerageFirm.getLicenceNumber());   
