@@ -438,7 +438,13 @@ public class DatabaseConnector {
 		return v;
 	}
 
-	public boolean updateBroker(int idToUpdate, User user) {
+	public Validator updateBroker(int idToUpdate, User user) {
+		// validate input
+		Validator v = user.validate();
+		if (!v.isVerified()) {
+			return v;
+		}
+
 		PreparedStatement st = null;
 		ResultSet rs = null;
 
@@ -461,7 +467,9 @@ public class DatabaseConnector {
 			int affectedRows = st.executeUpdate();
 
 			if (affectedRows == 0) {
-				throw new SQLException("Update failed");
+				v.setVerified(false);
+				v.setStatus("Could not update the table");
+				return v;
 			}
 
 		} catch (SQLException ex) {
@@ -469,7 +477,10 @@ public class DatabaseConnector {
 			lgr.log(Level.WARNING, ex.getMessage(), ex);
 		}
 
-		return true;
+		v.setVerified(true);
+		v.setStatus("Success");
+
+		return v;
 	}
 
 	public ArrayList<CustomerInfo> selectCustomerInfoAll() {
