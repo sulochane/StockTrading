@@ -40,19 +40,48 @@ public class StockController implements Initializable {
 
         Stock stock = new Stock();
         
-        stock.setName(StockName.getText());
-        stock.setAmount( Integer.parseInt(Quantity.getText()));
-        stock.setPrice( Integer.parseInt(Price.getText())); 
-             
+        stock.setName(StockName.getText());       
+        
+        if (Quantity.getText().isEmpty())
+        {
+            Quantity.setText("0");
+        }    
+        if (Price.getText().isEmpty())
+        {
+             Price.setText("0");
+        }  
+        
+        try
+        {
+            stock.setAmount( Integer.parseInt(Quantity.getText()));
+        }     
+        catch(NumberFormatException ex)
+        {            
+            Message.setText("Erro in price " + System.lineSeparator() + Enumeration.InputValidation.INPUT_VALIDATION_INVAILD_DOUBLE_FORMAT);
+            return;
+        }
+        
+        try
+        {
+            stock.setPrice(  Double.parseDouble(Price.getText()));
+        }     
+        catch(NumberFormatException ex)
+        {            
+            Message.setText("Erro in price " + System.lineSeparator() + Enumeration.InputValidation.INPUT_VALIDATION_INVAILD_DOUBLE_FORMAT);
+            return;
+        }
+        stock.setStatusId(Integer.parseInt(StatusChoiceBox.getValue().getKey()));   
+        
         Message.setText(Enumeration.Database.DB_REQUEST_INITIATED);
-        if (Utility.AddStock(stock))
+        Validator validator = Utility.AddStock(stock);
+        if (validator.isVerified())
         {
             PopulateStocks();
             Message.setText(Enumeration.Database.DB_INSERT_SUCCESS);
         }
         else
         {
-            Message.setText(Enumeration.Database.DB_INSERT_FAILURE);
+            Message.setText(validator.getStatus());
         }           
     }
     
@@ -70,19 +99,46 @@ public class StockController implements Initializable {
         
         Stock stock = new Stock();
         stock.setId(Integer.parseInt(keyValue.getKey()));
-        stock.setName(StockName.getText());
-        stock.setAmount( Integer.parseInt(Quantity.getText()));
-        stock.setPrice( Integer.parseInt(Price.getText())); 
-             
+        stock.setName(StockName.getText());       
+        
+        if (Quantity.getText().isEmpty())
+        {
+            Quantity.setText("0");
+        }    
+        if (Price.getText().isEmpty())
+        {
+             Price.setText("0");
+        }  
+        
+        try
+        {
+            stock.setAmount( Integer.parseInt(Quantity.getText()));
+        }     
+        catch(NumberFormatException ex)
+        {            
+            Message.setText("Erro in price " + System.lineSeparator() + Enumeration.InputValidation.INPUT_VALIDATION_INVAILD_DOUBLE_FORMAT);
+            return;
+        }
+        
+        try
+        {
+            stock.setPrice(  Double.parseDouble(Price.getText()));
+        }     
+        catch(NumberFormatException ex)
+        {            
+            Message.setText("Erro in price " + System.lineSeparator() + Enumeration.InputValidation.INPUT_VALIDATION_INVAILD_DOUBLE_FORMAT);
+            return;
+        }    
         Message.setText(Enumeration.Database.DB_REQUEST_INITIATED);
-        if (Utility.UpdateStock(stock))
+        Validator validator = Utility.UpdateStock(stock);
+        if (validator.isVerified())
         {
             PopulateStocks();
             Message.setText(Enumeration.Database.DB_UPDATE_SUCCESS);
         }
         else
         {
-            Message.setText(Enumeration.Database.DB_UPDATE_FAILURE);
+            Message.setText(validator.getStatus());
         }   
         
     }
@@ -102,16 +158,19 @@ public class StockController implements Initializable {
     @FXML
     private void ShowDetails()
     {
+        if (StocksListView.getItems().isEmpty() || StocksListView.getSelectionModel().getSelectedItem() == null)
+        {
+            return;
+        }
         KeyValuePair keyValue = StocksListView.getSelectionModel().getSelectedItem();       
        
         Stock stock = Utility.GetStockInfo(Integer.parseInt( keyValue.getKey()));
         
         StockName.setText(stock.getName());
         Quantity.setText(Integer.toString(stock.getAmount()));
-        Price.setText(Integer.toString(stock.getPrice()));       
+        Price.setText(Utility.FormatNumber(stock.getPrice()));       
                
-        // TODO: database is not yet supported, check with Dmitriy
-        //StatusChoiceBox.getSelectionModel().select(stock.getStatus());
+        StatusChoiceBox.getSelectionModel().select(stock.getStatusId());
         
         Message.setText(null);
         

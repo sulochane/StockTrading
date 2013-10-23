@@ -43,9 +43,10 @@ public class BrokerFirmController implements Initializable {
     private void handleAddButtonAction(ActionEvent event) {    
 
         StockTradingServer.BrokerageFirm brokerageFirm = new StockTradingServer.BrokerageFirm();
+        
         brokerageFirm.setName(BrokerageFirmName.getText());
         brokerageFirm.setLicenceNumber(BrokerageFirmLicenseNumber.getText());
-        brokerageFirm.setAddressStreet(AddressState.getText());
+        brokerageFirm.setAddressStreet(AddressStreet.getText());
         brokerageFirm.setAddressCity(AddressCity.getText());
         brokerageFirm.setAddressState(AddressState.getText());
         brokerageFirm.setAddressZip(AddressZip.getText());
@@ -136,6 +137,10 @@ public class BrokerFirmController implements Initializable {
     @FXML
     private void ShowDetails()
     {
+        if (BrokerageFirmListView.getItems().isEmpty() || BrokerageFirmListView.getSelectionModel().getSelectedItem() == null)
+        {
+            return;
+        }
         KeyValuePair brokerageFirmKeyValue = BrokerageFirmListView.getSelectionModel().getSelectedItem();
         
         StockTradingServer.DatabaseConnector dbConnector = new StockTradingServer.DatabaseConnector();

@@ -4,8 +4,6 @@
  */
 package StockTradingClient;
 
-
-
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -150,6 +148,11 @@ public class BrokerController implements Initializable {
     {
         clearScreen();
         
+        if (BrokersListView.getItems().isEmpty() || BrokersListView.getSelectionModel().getSelectedItem() == null)
+        {
+            return;
+        }
+        
         // Hide passwords
         Password1.visibleProperty().setValue(false);
         Password2.visibleProperty().setValue(false);
@@ -185,12 +188,13 @@ public class BrokerController implements Initializable {
         
         if (keyValue.getKey() == null)
         {
-            Utility.PopulateBrokers( 0, BrokersListView);
+            Utility.PopulateBrokers( 0, BrokersListView);            
         }
         else
         {
             Utility.PopulateBrokers( Integer.parseInt(keyValue.getKey()), BrokersListView);
         }
+        SetScreenModeAddNew();
     }
 
     private void SetScreenModeAddNew()

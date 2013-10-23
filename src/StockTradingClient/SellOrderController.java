@@ -7,6 +7,7 @@ package StockTradingClient;
 import StockTradingCommon.Enumeration;
 import StockTradingServer.*;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,9 +26,9 @@ import javafx.scene.control.*;
 public class SellOrderController implements Initializable {               
 
     
-    @FXML private TextField SettlementDate;  
+    @FXML private TextField IssueDate;  
     @FXML private TextField ExpirationDate;
-    @FXML private TextField StockBidPrice;  
+    @FXML private TextField StockAskPrice;  
     @FXML private TextField StockQuantity;      
 
     @FXML private ChoiceBox<KeyValuePair> StatusChoiceBox = new ChoiceBox<>();
@@ -50,9 +51,9 @@ public class SellOrderController implements Initializable {
 
         Email.setText(null);  
 
-        SettlementDate.clear();
+        IssueDate.clear();
         ExpirationDate.clear();
-        StockBidPrice.clear(); 
+        StockAskPrice.clear(); 
         StockQuantity.clear(); 
         
         CurrentStockPrice.setText(null);      
@@ -71,7 +72,7 @@ public class SellOrderController implements Initializable {
         // TODO: Set customer id
         if(CustomerNameComboBox.getValue().getKey() != null)
         {
-            //order.setCustomerId( Integer.parseInt(CustomerNameComboBox.getValue().getKey()));
+            order.setCustomerId( Integer.parseInt(CustomerNameComboBox.getValue().getKey()));
         }
 
         if(StockNameComboBox.getValue().getKey() != null)
@@ -81,9 +82,9 @@ public class SellOrderController implements Initializable {
         
         order.setAmount(Integer.parseInt( StockQuantity.getText()));
         //TODO :
-        //order.setPrice(Integer.parseInt( StockAskPrice.getText()));
+        order.setPrice(Integer.parseInt( StockAskPrice.getText()));
         
-        if (!Utility.isValidDate(SettlementDate.getText()))
+        if (!Utility.isValidDate(IssueDate.getText()))
         {
             errorMessage += "Invalid date format in Settlement Date. It should be in the form of MM-DD-YYYY.";
         }
@@ -104,7 +105,7 @@ public class SellOrderController implements Initializable {
         java.util.Date expiryDate = null;
         try
         {
-            settleDate = dateFormat.parse(SettlementDate.getText());
+            settleDate = dateFormat.parse(IssueDate.getText());
             expiryDate = dateFormat.parse(ExpirationDate.getText());
         }
         catch (ParseException ex)
@@ -112,8 +113,11 @@ public class SellOrderController implements Initializable {
             Message.setText("Invalid Date, Please check the format.");
             return;
         }
-        java.sql.Date sqlSettleDate = new java.sql.Date(settleDate.getTime());
-        java.sql.Date sqlExpiryDate = new java.sql.Date(expiryDate.getTime());
+        //java.sql.Date sqlSettleDate = new java.sql.Date(settleDate.getTime());
+        //java.sql.Date sqlExpiryDate = new java.sql.Date(expiryDate.getTime());
+       
+        Timestamp sqlSettleDate = new Timestamp(settleDate.getTime());
+        Timestamp sqlExpiryDate = new Timestamp(expiryDate.getTime());
         
         order.setDateIssued(sqlSettleDate );        
         order.setDateExpiration(sqlExpiryDate );
@@ -123,14 +127,15 @@ public class SellOrderController implements Initializable {
         }
         
         Message.setText(Enumeration.Database.DB_REQUEST_INITIATED);
-        if (Utility.AddSellingOrder(order))
+        Validator validator = Utility.AddSellingOrder(order);
+        if (validator.isVerified())
         {
             PopulateStocks();
             Message.setText(Enumeration.Database.DB_INSERT_SUCCESS);
         }
         else
         {
-            Message.setText(Enumeration.Database.DB_INSERT_FAILURE);
+            Message.setText(validator.getStatus());
         }         
     }
     
@@ -152,7 +157,7 @@ public class SellOrderController implements Initializable {
         
         if(CustomerNameComboBox.getValue().getKey() != null)
         {
-            //order.setCustomerId( Integer.parseInt(CustomerNameComboBox.getValue().getKey()));
+            order.setCustomerId( Integer.parseInt(CustomerNameComboBox.getValue().getKey()));
         }
 
         if(StockNameComboBox.getValue().getKey() != null)
@@ -161,10 +166,9 @@ public class SellOrderController implements Initializable {
         }
         
         order.setAmount(Integer.parseInt( StockQuantity.getText()));
-        //TODO :
-        //order.setPrice(Integer.parseInt( StockAskPrice.getText()));
+        order.setPrice(Integer.parseInt( StockAskPrice.getText()));
         
-        if (!Utility.isValidDate(SettlementDate.getText()))
+        if (!Utility.isValidDate(IssueDate.getText()))
         {
             errorMessage += "Invalid date format in Settlement Date.";
         }
@@ -186,7 +190,7 @@ public class SellOrderController implements Initializable {
         java.util.Date expiryDate = null;
         try
         {
-            settleDate = dateFormat.parse(SettlementDate.getText());
+            settleDate = dateFormat.parse(IssueDate.getText());
             expiryDate = dateFormat.parse(ExpirationDate.getText());
         }
         catch (ParseException ex)
@@ -194,8 +198,11 @@ public class SellOrderController implements Initializable {
             Message.setText("Invalid Date, Please check the format.");
             return;
         }
-        java.sql.Date sqlSettleDate = new java.sql.Date(settleDate.getTime());
-        java.sql.Date sqlExpiryDate = new java.sql.Date(expiryDate.getTime());
+        //java.sql.Date sqlSettleDate = new java.sql.Date(settleDate.getTime());
+        //java.sql.Date sqlExpiryDate = new java.sql.Date(expiryDate.getTime());
+       
+        Timestamp sqlSettleDate = new Timestamp(settleDate.getTime());
+        Timestamp sqlExpiryDate = new Timestamp(expiryDate.getTime());
         
         order.setDateIssued(sqlSettleDate );        
         order.setDateExpiration(sqlExpiryDate );
@@ -205,14 +212,15 @@ public class SellOrderController implements Initializable {
         }
         
         Message.setText(Enumeration.Database.DB_REQUEST_INITIATED);
-        if (Utility.UpdateSellingOrder(order))
+        Validator validator = Utility.UpdateSellingOrder(order);
+        if (validator.isVerified())
         {
             PopulateStocks();
             Message.setText(Enumeration.Database.DB_UPDATE_SUCCESS);
         }
         else
         {
-            Message.setText(Enumeration.Database.DB_UPDATE_FAILURE);
+            Message.setText(validator.getStatus());
         }  
         
     }
@@ -257,6 +265,10 @@ public class SellOrderController implements Initializable {
     @FXML
     public void ShowDetails()
     {
+        if (SellOrderListView.getItems().isEmpty() || SellOrderListView.getSelectionModel().getSelectedItem() == null)
+        {
+            return;
+        }
         if (SellOrderListView.getSelectionModel().getSelectedItem() == null)
         {
             return;
@@ -270,7 +282,7 @@ public class SellOrderController implements Initializable {
         //StockBidPrice.setText(order.getPrice());        
                 
         ExpirationDate.setText(new SimpleDateFormat("MM-dd-yyyy").format(order.getDateExpiration()));
-        SettlementDate.setText(new SimpleDateFormat("MM-dd-yyyy").format(order.getDateIssued())); 
+        IssueDate.setText(new SimpleDateFormat("MM-dd-yyyy").format(order.getDateIssued())); 
         
         //TODO:
         //CustomerNameComboBox.getSelectionModel().select(order.getCustomerId());

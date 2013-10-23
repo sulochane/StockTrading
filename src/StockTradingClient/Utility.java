@@ -84,6 +84,11 @@ public class  Utility
         DecimalFormat df = new DecimalFormat("#,##0.00");
         return df.format(number);
     }
+    public static String FormatNumber(double number)
+    {
+        DecimalFormat df = new DecimalFormat("#,##0.00");
+        return df.format(number);
+    }
         
     public static void PopulateStatus(ChoiceBox choiceBox)
     {
@@ -103,11 +108,11 @@ public class  Utility
 
     
     // Stock
-    public static boolean AddStock(Stock stock)
+    public static Validator AddStock(Stock stock)
     {
         return dbConnector.insertNewStock(stock);        
     }
-    public static boolean UpdateStock(Stock stock)
+    public static Validator UpdateStock(Stock stock)
     {
         return dbConnector.updateStock(stock.getId(), stock);        
     }
@@ -251,16 +256,16 @@ public class  Utility
     }
         
     // Buying Order
-    public static boolean AddBuyingOrder(Order order)
+    public static Validator AddBuyingOrder(Order order)
     {
         order.setTypeId(Enumeration.OrderType.BUYING_ORDER);
         order.setBrokerId(getBrokerID());
         return dbConnector.insertNewOrder(order);
     }
-    public static boolean UpdateBuyingOrder(Order order)
+    public static Validator UpdateBuyingOrder(Order order)
     {
         order.setTypeId(Enumeration.OrderType.BUYING_ORDER);
-        
+        order.setBrokerId(getBrokerID());
         return dbConnector.updateOrder(order.getOrderId(), order);
     }
     public static Order GetBuyingOrder(int orderID)
@@ -289,16 +294,16 @@ public class  Utility
     }
         
     // Selling Order
-    public static boolean AddSellingOrder(Order order)
+    public static Validator AddSellingOrder(Order order)
     {
         order.setTypeId(Enumeration.OrderType.SELLING_ORDER);
-        
+        order.setBrokerId(getBrokerID());
         return dbConnector.insertNewOrder(order);
     }
-    public static boolean UpdateSellingOrder(Order order)
+    public static Validator UpdateSellingOrder(Order order)
     {
         order.setTypeId(Enumeration.OrderType.SELLING_ORDER);
-        
+        order.setBrokerId(getBrokerID());
         return dbConnector.updateOrder(order.getOrderId(), order);
     }
     public static Order GetSellingOrder(int orderID)

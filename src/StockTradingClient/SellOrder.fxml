@@ -57,12 +57,12 @@
                   </items>
                 </ComboBox>
                 <Label text="Stock Name :" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-                <Label text="Settlement Date :" GridPane.columnIndex="0" GridPane.rowIndex="9" />
-                <Label text="Bid Price :" GridPane.columnIndex="0" GridPane.rowIndex="11" />
+                <Label text="Issue Date :" GridPane.columnIndex="0" GridPane.rowIndex="9" />
+                <Label text="Ask Price :" GridPane.columnIndex="0" GridPane.rowIndex="11" />
                 <Label text="Quantity :" GridPane.columnIndex="0" GridPane.rowIndex="12" />
                 <Label text="Status :" GridPane.columnIndex="0" GridPane.rowIndex="14" />
-                <TextField fx:id="SettlementDate" alignment="CENTER" maxWidth="-Infinity" prefWidth="150.0" promptText="mm-dd-yyyy" text="" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                <TextField id="StockAskPrice" fx:id="StockBidPrice" alignment="CENTER_RIGHT" maxWidth="-Infinity" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                <TextField fx:id="IssueDate" alignment="CENTER" maxWidth="-Infinity" prefWidth="150.0" promptText="mm-dd-yyyy" text="" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                <TextField fx:id="StockAskPrice" alignment="CENTER_RIGHT" maxWidth="-Infinity" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
                 <TextField fx:id="StockQuantity" alignment="CENTER_RIGHT" maxWidth="-Infinity" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
                 <ChoiceBox fx:id="StatusChoiceBox" mouseTransparent="false" pickOnBounds="false" prefWidth="146.49990844726562" GridPane.columnIndex="1" GridPane.rowIndex="14">
                   <items>
