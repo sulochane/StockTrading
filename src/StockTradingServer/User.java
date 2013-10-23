@@ -122,9 +122,9 @@ public class User {
 		status += vSsn.getStatus();
 
 		// 5. validate ssn
-		vPassword = iv.validateString(this.getPassword(), "Password");
-		verified &= vPassword.isVerified();
-		status += vPassword.getStatus();
+//		vPassword = iv.validateString(this.getPassword(), "Password");
+//		verified &= vPassword.isVerified();
+//		status += vPassword.getStatus();
 
 		// 6. status id
 		vStatusId = iv.validateIntGeneral(this.getStatusId(), "StatusId");
