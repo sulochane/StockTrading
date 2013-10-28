@@ -97,6 +97,7 @@ public class BrokerController implements Initializable {
         {
             Message.setText(validator.getStatus());
         } 
+        BrokersListView.getSelectionModel().select(keyValue);
     }
     
     @FXML 
@@ -178,8 +179,7 @@ public class BrokerController implements Initializable {
     public void handleShowBrokers(ActionEvent event)
     {
         PopulateBrokers();
-    }
-    
+    }    
 
     public void PopulateBrokers()
     {

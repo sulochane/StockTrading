@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import javafx.beans.value.ObservableValueBase;
 
 import javafx.scene.control.*;
 
@@ -24,22 +25,22 @@ import javafx.scene.control.*;
 public class  Utility 
 {
     private static DatabaseConnector dbConnector = new DatabaseConnector();
-    private static int brokerageFirmID = -1;     // when a broker logs in his Brokerage Firm id should be here
-    private static int brokerID = -1;            // when a broker logs in his id should be here
+    private static int currentUser_BrokerageFirmID = -1;     // when a broker logs in his Brokerage Firm id should be here
+    private static int currentUser_BrokerID = -1;            // when a broker logs in his id should be here
 
-    public static int getBrokerID() {
-        return brokerID;
+    public static int getCurrentUser_BrokerID() {
+        return currentUser_BrokerID;
     }
 
-    public static void setBrokerID(int brokerID) {
-        Utility.brokerID = brokerID;
+    public static void setCurrentUser_BrokerID(int brokerID) {
+        Utility.currentUser_BrokerID = brokerID;
     }
-    public static int getBrokerageFirmID() {
-        return brokerageFirmID;
+    public static int getCurrentUser_BrokerageFirmID() {
+        return currentUser_BrokerageFirmID;
     }
 
-    public static void setBrokerageFirmID(int brokerageFirmID) {
-        Utility.brokerageFirmID = brokerageFirmID;
+    public static void setCurrentUser_BrokerageFirmID(int brokerageFirmID) {
+        Utility.currentUser_BrokerageFirmID = brokerageFirmID;
     }
     
     public  Utility()
@@ -94,7 +95,7 @@ public class  Utility
         StockTradingServer.DatabaseConnector dbConnector = new StockTradingServer.DatabaseConnector();     
         
         ArrayList<StatusesOptions> statuses = dbConnector.selectAllStatuses();        
-        
+        choiceBox.getItems().clear();
         choiceBox.getItems().add(new KeyValuePair("-1", "Select Status"));
 
         for(StatusesOptions s : statuses)
@@ -104,7 +105,26 @@ public class  Utility
         choiceBox.getSelectionModel().selectFirst();
     }
     
+    public static void SelectKey(ComboBox<KeyValuePair> comboBox, String key)
+    {
+        for (KeyValuePair item : comboBox.getItems()) 
+        {
+            if (item.getKey() != null)
+            {
+                if (item.getKey().equals(key))
+                {
+                    //comboBox.getSelectionModel().select(item);
+                    comboBox.setValue(item);
+                    break;
+                }
+            }
+        }
+    }
 
+    public static void SelectKey(ComboBox<KeyValuePair> comboBox, int key)
+    {
+        SelectKey(comboBox, Integer.toString(key));
+    }
     
     // Stock
     public static Validator AddStock(Stock stock)
@@ -229,14 +249,25 @@ public class  Utility
     }
     
     // Customer
+    
     public static CustomerInfo GetCustomerInfo(int customerId)
     {
         return dbConnector.selectCustomerInfo(customerId);
     }    
+    public static Validator AddCustomer(CustomerInfo customer)
+    {
+        customer.setFirmId(getCurrentUser_BrokerageFirmID());
+        return dbConnector.insertNewCustomerInfo(customer);
+    }
+    public static Validator UpdateCustomer(CustomerInfo customer)
+    {
+        customer.setFirmId(getCurrentUser_BrokerageFirmID());
+        return dbConnector.updateCustomerInfo(customer.getId(), customer);        
+    }
     public static void PopulateCustomers(ComboBox comboBox)
     {
         ArrayList<CustomerInfo> statuses = dbConnector.selectCustomerInfoAll();        
-        
+        comboBox.getItems().clear();
         comboBox.getItems().add(new KeyValuePair("-1", "[Select Customer]"));
 
         for(CustomerInfo s : statuses)
@@ -245,30 +276,40 @@ public class  Utility
         }
         comboBox.getSelectionModel().selectFirst();
     }
-    public static void PopulateCustomers(ComboBox comboBox, int brokerageFirmID)
+    
+    public static void PopulateCustomersOfFirm(ComboBox comboBox)
     {
-        ArrayList<CustomerInfo> statuses = dbConnector.selectCustomerInfoAll();        
-        
+        ArrayList<CustomerInfo> statuses = dbConnector.selectCustomersByFirm(getCurrentUser_BrokerageFirmID());        
+        comboBox.getItems().clear();
         comboBox.getItems().add(new KeyValuePair(null, "[Select Customer]"));
-
+        
         for(CustomerInfo s : statuses)
         {
             comboBox.getItems().add(new KeyValuePair(Integer.toString(s.getId()), s.getFirstName() + " " + s.getLastName()));
         }
         comboBox.getSelectionModel().selectFirst();
     }
+    public static void PopulateCustomers(ListView listView, int brokerageFirmID)
+    {
+        ArrayList<CustomerInfo> statuses = dbConnector.selectCustomersByFirm(brokerageFirmID);        
+        listView.getItems().clear();
         
+        for(CustomerInfo s : statuses)
+        {
+            listView.getItems().add(new KeyValuePair(Integer.toString(s.getId()), s.getFirstName() + " " + s.getLastName()));
+        }
+    }    
     // Buying Order
     public static Validator AddBuyingOrder(Order order)
     {
         order.setTypeId(Enumeration.OrderType.BUYING_ORDER);
-        order.setBrokerId(getBrokerID());
+        order.setBrokerId(getCurrentUser_BrokerID());
         return dbConnector.insertNewOrder(order);
     }
     public static Validator UpdateBuyingOrder(Order order)
     {
         order.setTypeId(Enumeration.OrderType.BUYING_ORDER);
-        order.setBrokerId(getBrokerID());
+        order.setBrokerId(getCurrentUser_BrokerID());
         return dbConnector.updateOrder(order.getOrderId(), order);
     }
     public static Order GetBuyingOrder(int orderID)
@@ -278,12 +319,16 @@ public class  Utility
     public static void PopulateBuyingOrdersByBrokerageFirm(ListView listView)
     {
         listView.getItems().clear();
-        //TODO
-        //ArrayList<Order> records = dbConnector.selectBuyingOrdersActiveOnly(getBrokerageFirmID);        
-//        for(Order s : records)
-//        {
-//            listView.getItems().add(new KeyValuePair(Integer.toString(s.getOrderId()),Integer.toString(s.getOrderId()) ));
-//        }
+        ArrayList<Order> records = dbConnector.selectOrdersByFirmByType(
+                                                    getCurrentUser_BrokerageFirmID()
+                                                    , Enumeration.OrderType.BUYING_ORDER);            
+        for(Order s : records)
+        {
+            listView.getItems().add(    new KeyValuePair(
+                                                    Integer.toString(s.getOrderId())
+                                                    , s.getDisplaySummary()  )
+                                    );
+        }
     }
     public static void PopulateBuyingOrders(ListView listView)
     {
@@ -300,13 +345,13 @@ public class  Utility
     public static Validator AddSellingOrder(Order order)
     {
         order.setTypeId(Enumeration.OrderType.SELLING_ORDER);
-        order.setBrokerId(getBrokerID());
+        order.setBrokerId(getCurrentUser_BrokerID());
         return dbConnector.insertNewOrder(order);
     }
     public static Validator UpdateSellingOrder(Order order)
     {
         order.setTypeId(Enumeration.OrderType.SELLING_ORDER);
-        order.setBrokerId(getBrokerID());
+        order.setBrokerId(getCurrentUser_BrokerID());
         return dbConnector.updateOrder(order.getOrderId(), order);
     }
     public static Order GetSellingOrder(int orderID)
@@ -315,13 +360,17 @@ public class  Utility
     }
     public static void PopulateSellingOrdersByBrokerageFirm(ListView listView)
     {
-        //TODO
-//        listView.getItems().clear();
-//        ArrayList<Order> records = dbConnector.selectSellingOrdersActiveOnly(getBrokerageFirmID());        
-//        for(Order s : records)
-//        {
-//            listView.getItems().add(new KeyValuePair(Integer.toString(s.getOrderId()),Integer.toString(s.getOrderId()) ));
-//        }
+        listView.getItems().clear();
+        ArrayList<Order> records = dbConnector.selectOrdersByFirmByType(
+                                                    getCurrentUser_BrokerageFirmID()
+                                                    , Enumeration.OrderType.SELLING_ORDER);        
+        for(Order s : records)
+        {
+            listView.getItems().add(    new KeyValuePair(
+                                         Integer.toString(s.getOrderId())
+                                         , s.getDisplaySummary()  )
+                                    );
+        }
     }
     public static void PopulateSellingOrders(ListView listView)
     {

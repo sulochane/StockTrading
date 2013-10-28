@@ -46,8 +46,18 @@ public class Admin extends Application {
 //        primaryStage.show();
         
         // TODO Capture the proper user ids
-        Utility.setBrokerID(1);
-        Utility.setBrokerageFirmID(11);
+        int userId = 44;
+        Utility.setCurrentUser_BrokerID(userId);
+        // get the brokerage firm id of the user (Admin will not have a brokerage firm, hence set to -1)
+        StockTradingServer.User user = Utility.GetBrokerInfo(userId);
+        if (user.getBrokerFirmId() > 0)
+        {
+            Utility.setCurrentUser_BrokerageFirmID(user.getBrokerFirmId());
+        }
+        else
+        {
+            Utility.setCurrentUser_BrokerageFirmID(-1);
+        }
 
         stage = primaryStage;
         

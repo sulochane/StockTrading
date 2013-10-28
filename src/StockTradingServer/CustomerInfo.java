@@ -11,6 +11,9 @@ public class CustomerInfo {
 	private String lastName;
 	private String email;
 	private String phone;
+        private int firmId;
+
+
 	private int statusId;
 
 	public int getId() {
@@ -53,7 +56,15 @@ public class CustomerInfo {
 		this.phone = phone;
 	}
 
-	public int getStatusId() {
+        public int getFirmId() {
+        return firmId;
+    }
+
+        public void setFirmId(int firmId) {
+        this.firmId = firmId;
+    }
+	
+        public int getStatusId() {
 		return statusId;
 	}
 

@@ -112,8 +112,6 @@ public class BuyOrderController implements Initializable {
             Message.setText("Invalid Date, Please check the format.");
             return;
         }
-        //java.sql.Date sqlSettleDate = new java.sql.Date(settleDate.getTime());
-        //java.sql.Date sqlExpiryDate = new java.sql.Date(expiryDate.getTime());
        
         Timestamp sqlSettleDate = new Timestamp(settleDate.getTime());
         Timestamp sqlExpiryDate = new Timestamp(expiryDate.getTime());
@@ -128,7 +126,7 @@ public class BuyOrderController implements Initializable {
         Validator validator = Utility.AddBuyingOrder(order);
         if (validator.isVerified())
         {
-            PopulateStocks();
+            PopulateBuyOrders();
             Message.setText(Enumeration.Database.DB_INSERT_SUCCESS);
         }
         else
@@ -141,6 +139,13 @@ public class BuyOrderController implements Initializable {
     private void handleSaveButtonAction(ActionEvent event) throws Exception
     {            
         String errorMessage = "";
+        
+        if (BuyOrderListView.getItems().isEmpty() || BuyOrderListView.getSelectionModel().getSelectedItem() == null)
+        {
+            Message.setText("Please select the buying order that you want to edit.");
+            return;
+        }
+        
         KeyValuePair keyValue = BuyOrderListView.getSelectionModel().getSelectedItem();        
         
         if (keyValue.getKey() == null)
@@ -151,7 +156,7 @@ public class BuyOrderController implements Initializable {
         
         Order order = new Order();
         
-        // TODO: Set customer id
+        order.setOrderId(Integer.parseInt(keyValue.getKey()));     
         
         if(CustomerNameComboBox.getValue().getKey() != null)
         {
@@ -214,20 +219,22 @@ public class BuyOrderController implements Initializable {
         Validator validator = Utility.UpdateBuyingOrder(order);
         if (validator.isVerified())
         {
-            PopulateStocks();
+            PopulateBuyOrders();
             Message.setText(Enumeration.Database.DB_UPDATE_SUCCESS);
         }
         else
         {
             Message.setText(validator.getStatus());
         }  
-        
+        BuyOrderListView.getSelectionModel().select(keyValue);  // keep the last edited item selected. 
     }
     
     @FXML
     private void handleShowCustomerInfo()
     {
+
         if(
+                (CustomerNameComboBox.getValue() != null) &&
                 (CustomerNameComboBox.getValue().getKey() != null) &&
                 (!CustomerNameComboBox.getValue().getKey().equals("-1") )
           )
@@ -239,7 +246,7 @@ public class BuyOrderController implements Initializable {
         else
         {
             Email.setText(null);
-        }        
+        }    
     }
     
     @FXML
@@ -268,30 +275,25 @@ public class BuyOrderController implements Initializable {
         {
             return;
         }
-        if(BuyOrderListView.getSelectionModel().getSelectedItem() == null)
-        {
-            return;
-        }
         
         KeyValuePair keyValue = BuyOrderListView.getSelectionModel().getSelectedItem();       
        
         Order order = Utility.GetBuyingOrder(Integer.parseInt( keyValue.getKey()));
         
         StockQuantity.setText(Integer.toString( order.getAmount()));
-        //TODO
-        //StockBidPrice.setText(order.getPrice());        
+        
+        StockBidPrice.setText(Double.toString( order.getPrice() ));        
                 
         ExpirationDate.setText(new SimpleDateFormat("MM-dd-yyyy").format(order.getDateExpiration()));
         IssueDate.setText(new SimpleDateFormat("MM-dd-yyyy").format(order.getDateIssued())); 
         
-        //TODO:
-        //CustomerNameComboBox.getSelectionModel().select(order.getCustomerId());
+        Utility.SelectKey(CustomerNameComboBox, order.getCustomerId());
+        Utility.SelectKey(StockNameComboBox, order.getStockId());
         
-        //TODO
-        //CustomerInfo customer = Utility.GetCustomerInfo(order.getCustomerId() );
-        //Email.setText(customer.getEmail());        
+
+        CustomerInfo customer = Utility.GetCustomerInfo(order.getCustomerId() );
+        Email.setText(customer.getEmail());                
         
-        StockNameComboBox.getSelectionModel().select(order.getStockId());
         StatusChoiceBox.getSelectionModel().select(order.getStatusId());
         
         Message.setText(null);
@@ -303,6 +305,7 @@ public class BuyOrderController implements Initializable {
         PopulateCustomers();
         PopulateStocks();
         PopulateStatus();
+        PopulateBuyOrders();
         SetScreenModeAddNew();              
     }
     
@@ -312,7 +315,7 @@ public class BuyOrderController implements Initializable {
     }   
     private void PopulateCustomers()
     {        
-        Utility.PopulateCustomers(CustomerNameComboBox, Utility.getBrokerageFirmID());        
+        Utility.PopulateCustomersOfFirm(CustomerNameComboBox);        
     }      
     private void PopulateStocks()
     {
@@ -320,8 +323,7 @@ public class BuyOrderController implements Initializable {
     } 
     private void PopulateBuyOrders()
     {
-        // TODO
-        //BuyOrderListView
+        Utility.PopulateBuyingOrdersByBrokerageFirm(BuyOrderListView);
     }
     private void SetScreenModeAddNew()
     {

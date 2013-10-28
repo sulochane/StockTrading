@@ -99,6 +99,8 @@ public class BrokerFirmController implements Initializable {
         {
             Message.setText(validator.getStatus());
         }
+        
+        BrokerageFirmListView.getSelectionModel().select(keyValueBrokerageFirmSelected);
     }
     
     @FXML

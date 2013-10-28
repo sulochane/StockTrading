@@ -128,7 +128,9 @@ public class StockController implements Initializable {
         {            
             Message.setText("Erro in price " + System.lineSeparator() + Enumeration.InputValidation.INPUT_VALIDATION_INVAILD_DOUBLE_FORMAT);
             return;
-        }    
+        } 
+        stock.setStatusId(Integer.parseInt(StatusChoiceBox.getValue().getKey()));  
+        
         Message.setText(Enumeration.Database.DB_REQUEST_INITIATED);
         Validator validator = Utility.UpdateStock(stock);
         if (validator.isVerified())
@@ -140,7 +142,7 @@ public class StockController implements Initializable {
         {
             Message.setText(validator.getStatus());
         }   
-        
+        StocksListView.getSelectionModel().select(keyValue);
     }
         
     @FXML

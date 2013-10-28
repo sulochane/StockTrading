@@ -16,6 +16,9 @@ public class Order {
 	private double price;
 	private Timestamp dateIssued;
 	private Timestamp dateExpiration;
+        private String displaySummary;
+
+
 	private int statusId;
 
 	public int getOrderId() {
@@ -90,6 +93,14 @@ public class Order {
 		this.dateExpiration = dateExpiration;
 	}
 
+        public String getDisplaySummary() {
+            return displaySummary;
+        }
+
+        public void setDisplaySummary(String displaySummary) {
+            this.displaySummary = displaySummary;
+        }
+        
 	public int getStatusId() {
 		return statusId;
 	}
